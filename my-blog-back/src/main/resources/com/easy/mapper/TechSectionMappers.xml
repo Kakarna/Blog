@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.easy.mapper.TechSectionMappers">
+
+    <!-- 实体映射 -->
+    <resultMap id="base_result_map" type="com.easy.entity.po.TechSection">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="description" property="description" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <!-- 通用查询列 -->
+    <sql id="base_column_list">
+        id, name, description, created_at, updated_at
+    </sql>
+
+    <!-- 基础查询条件 -->
+    <sql id="base_query_condition">
+        <if test="query.id != null">
+            and id = #{query.id}
+        </if>
+        <if test="query.name != null and query.name != ''">
+            and name = #{query.name}
+        </if>
+        <if test="query.description != null and query.description != ''">
+            and description = #{query.description}
+        </if>
+    </sql>
+
+    <!-- 查询列表 -->
+    <select id="selectList" resultMap="base_result_map" parameterType="com.easy.entity.query.TechSectionQuery">
+        SELECT <include refid="base_column_list" /> FROM tech_sections
+        <where>
+            <include refid="base_query_condition" />
+        </where>
+    </select>
+
+    <!-- 查询数量 -->
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.easy.entity.query.TechSectionQuery">
+        SELECT count(1) FROM tech_sections
+        <where>
+            <include refid="base_query_condition" />
+        </where>
+    </select>
+
+    <!-- 单条插入 -->
+    <insert id="insert" parameterType="com.easy.entity.po.TechSection" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tech_sections (name, description)
+        VALUES (#{bean.name}, #{bean.description})
+    </insert>
+
+    <!-- 插入或更新 -->
+    <insert id="insertOrUpdate" parameterType="com.easy.entity.po.TechSection">
+        INSERT INTO tech_sections (id, name, description)
+        VALUES (#{bean.id}, #{bean.name}, #{bean.description})
+            ON DUPLICATE KEY UPDATE
+                                 name = VALUES(name),
+                                 description = VALUES(description),
+                                 updated_at = CURRENT_TIMESTAMP
+    </insert>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO tech_sections (name, description)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name}, #{item.description})
+        </foreach>
+    </insert>
+
+    <!-- 批量插入或更新 -->
+    <insert id="insertOrUpdateBatch" parameterType="java.util.List">
+        INSERT INTO tech_sections (id, name, description)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.name}, #{item.description})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        name = VALUES(name),
+        description = VALUES(description),
+        updated_at = CURRENT_TIMESTAMP
+    </insert>
+
+    <!-- 根据ID查询 -->
+    <select id="selectById" parameterType="int" resultMap="base_result_map">
+        SELECT <include refid="base_column_list" /> FROM tech_sections WHERE id = #{id}
+    </select>
+
+    <!-- 根据ID更新 -->
+    <update id="updateById" parameterType="com.easy.entity.po.TechSection">
+        UPDATE tech_sections
+        <set>
+            <if test="bean.name != null">
+                name = #{bean.name},
+            </if>
+            <if test="bean.description != null">
+                description = #{bean.description},
+            </if>
+            updated_at = CURRENT_TIMESTAMP
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID删除 -->
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM tech_sections WHERE id = #{id}
+    </delete>
+
+    <!-- 根据名称查询 -->
+    <select id="selectByName" parameterType="string" resultMap="base_result_map">
+        SELECT <include refid="base_column_list" /> FROM tech_sections WHERE name = #{name}
+    </select>
+
+    <!-- 根据名称更新 -->
+    <update id="updateByName" parameterType="com.easy.entity.po.TechSection">
+        UPDATE tech_sections
+        <set>
+            <if test="bean.name != null">
+                name = #{bean.name},
+            </if>
+            <if test="bean.description != null">
+                description = #{bean.description},
+            </if>
+            updated_at = CURRENT_TIMESTAMP
+        </set>
+        WHERE name = #{name}
+    </update>
+
+    <!-- 根据名称删除 -->
+    <delete id="deleteByName" parameterType="string">
+        DELETE FROM tech_sections WHERE name = #{name}
+    </delete>
+
+</mapper>

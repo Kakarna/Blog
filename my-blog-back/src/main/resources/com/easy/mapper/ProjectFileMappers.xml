@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.easy.mapper.ProjectFileMappers">
+
+    <!-- 实体映射 -->
+    <resultMap id="base_result_map" type="com.easy.entity.po.ProjectFile">
+        <id column="id" property="id" />
+        <result column="project_id" property="projectId" />
+        <result column="path" property="path" />
+        <result column="is_dir" property="isDir" />
+        <result column="content" property="content" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="base_column_list">
+        id,project_id,path,is_dir,content,create_time,update_time
+    </sql>
+
+    <!-- 基础查询条件 -->
+    <sql id="base_query_condition">
+        <if test="query.id != null">
+            and id = #{query.id}
+        </if>
+        <if test="query.projectId != null">
+            and project_id = #{query.projectId}
+        </if>
+        <if test="query.path != null and query.path != ''">
+            and path = #{query.path}
+        </if>
+        <if test="query.isDir != null">
+            and is_dir = #{query.isDir}
+        </if>
+        <if test="query.createTime != null">
+            and create_time = #{query.createTime}
+        </if>
+        <if test="query.updateTime != null">
+            and update_time = #{query.updateTime}
+        </if>
+    </sql>
+
+    <!-- 扩展查询条件 -->
+    <sql id="base_query_condition_extend">
+        <if test="query.pathFuzzy != null and query.pathFuzzy != ''">
+            and path like concat('%', #{query.pathFuzzy}, '%')
+        </if>
+        <if test="query.createTimeStart != null and query.createTimeStart != ''">
+            <![CDATA[ and create_time >= str_to_date(#{query.createTimeStart}, '%Y-%m-%d') ]]>
+        </if>
+        <if test="query.createTimeEnd != null and query.createTimeEnd != ''">
+            <![CDATA[ and create_time < date_sub(str_to_date(#{query.createTimeEnd}, '%Y-%m-%d'), interval -1 day) ]]>
+        </if>
+        <if test="query.updateTimeStart != null and query.updateTimeStart != ''">
+            <![CDATA[ and update_time >= str_to_date(#{query.updateTimeStart}, '%Y-%m-%d') ]]>
+        </if>
+        <if test="query.updateTimeEnd != null and query.updateTimeEnd != ''">
+            <![CDATA[ and update_time < date_sub(str_to_date(#{query.updateTimeEnd}, '%Y-%m-%d'), interval -1 day) ]]>
+        </if>
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="query_condition">
+        <where>
+            <include refid="base_query_condition" />
+            <include refid="base_query_condition_extend" />
+        </where>
+    </sql>
+
+    <!-- 查询列表 -->
+    <select id="selectList" resultMap="base_result_map">
+        SELECT <include refid="base_column_list" /> FROM project_files
+        <include refid="query_condition" />
+        <if test="query.orderBy != null">ORDER BY ${query.orderBy}</if>
+        <if test="query.simplePage != null">LIMIT #{query.simplePage.start},#{query.simplePage.end}</if>
+    </select>
+
+    <!-- 查询数量 -->
+    <select id="selectCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM project_files
+        <include refid="query_condition" />
+    </select>
+
+    <!-- 单条插入 -->
+    <insert id="insert" parameterType="com.easy.entity.po.ProjectFile">
+        <selectKey keyProperty="bean.id" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO project_files
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bean.id != null">id,</if>
+            <if test="bean.projectId != null">project_id,</if>
+            <if test="bean.path != null">path,</if>
+            <if test="bean.isDir != null">is_dir,</if>
+            <if test="bean.content != null">content,</if>
+            <if test="bean.createTime != null">create_time,</if>
+            <if test="bean.updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="bean.id != null">#{bean.id},</if>
+            <if test="bean.projectId != null">#{bean.projectId},</if>
+            <if test="bean.path != null">#{bean.path},</if>
+            <if test="bean.isDir != null">#{bean.isDir},</if>
+            <if test="bean.content != null">#{bean.content},</if>
+            <if test="bean.createTime != null">#{bean.createTime},</if>
+            <if test="bean.updateTime != null">#{bean.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!-- 根据Id查询 -->
+    <select id="selectById" resultMap="base_result_map">
+        SELECT <include refid="base_column_list" /> FROM project_files WHERE id = #{id}
+    </select>
+
+    <!-- 根据Id更新 -->
+    <update id="updateById" parameterType="com.easy.entity.po.ProjectFile">
+        UPDATE project_files
+        <set>
+            <if test="bean.projectId != null">project_id = #{bean.projectId},</if>
+            <if test="bean.path != null">path = #{bean.path},</if>
+            <if test="bean.isDir != null">is_dir = #{bean.isDir},</if>
+            <if test="bean.content != null">content = #{bean.content},</if>
+            <if test="bean.createTime != null">create_time = #{bean.createTime},</if>
+            <if test="bean.updateTime != null">update_time = #{bean.updateTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据Id删除 -->
+    <delete id="deleteById">
+        DELETE FROM project_files WHERE id = #{id}
+    </delete>
+
+
+    <!-- 根据项目ID查询 -->
+    <select id="selectListByProjectId" resultType="com.easy.entity.po.ProjectFile">
+        SELECT id, project_id, path, is_dir, content, create_time, update_time
+        FROM project_files
+        WHERE project_id = #{projectId}
+        ORDER BY path ASC
+    </select>
+
+    <!-- 根据项目Id删除 -->
+    <delete id="deleteByProjectId">
+        DELETE FROM project_files WHERE project_id = #{projectId}
+    </delete>
+
+    <!-- 根据项目ID和路径查询 -->
+    <select id="selectByProjectIdAndPath" resultType="com.easy.entity.po.ProjectFile">
+        SELECT id, project_id, path, is_dir, content, create_time, update_time
+        FROM project_files
+        WHERE project_id = #{projectId}
+          AND path = #{path}
+    </select>
+
+
+    <!-- 根据项目ID和路径更新 -->
+    <update id="updateByProjectIdAndPath" parameterType="com.easy.entity.po.ProjectFile">
+        UPDATE project_files
+        <set>
+            <if test="bean.projectId != null">project_id = #{bean.projectId},</if>
+            <if test="bean.path != null">path = #{bean.path},</if>
+            <if test="bean.isDir != null">is_dir = #{bean.isDir},</if>
+            <if test="bean.content != null">content = #{bean.content},</if>
+            <if test="bean.createTime != null">create_time = #{bean.createTime},</if>
+            <if test="bean.updateTime != null">update_time = #{bean.updateTime},</if>
+        </set>
+        WHERE project_id = #{projectId} AND path = #{path}
+    </update>
+
+    <!-- 根据项目ID和路径删除 -->
+    <delete id="deleteByProjectIdAndPath">
+        DELETE FROM project_files WHERE project_id = #{projectId} AND path = #{path}
+    </delete>
+
+</mapper>

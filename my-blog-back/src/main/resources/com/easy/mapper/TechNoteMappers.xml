@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.easy.mapper.TechNoteMappers">
+
+    <!-- 实体映射 -->
+    <resultMap id="base_result_map" type="com.easy.entity.po.TechNote">
+        <id column="id" property="id"/>
+        <result column="section_id" property="sectionId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+    </resultMap>
+
+    <!-- 通用列 -->
+    <sql id="base_column_list">
+        id, section_id, title, content, created_time, updated_time
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="base_query_condition">
+        <if test="query.id != null">
+            AND id = #{query.id}
+        </if>
+        <if test="query.sectionId != null">
+            AND section_id = #{query.sectionId}
+        </if>
+        <if test="query.title != null and query.title != ''">
+            AND title = #{query.title}
+        </if>
+    </sql>
+
+    <!-- 模糊和范围查询 -->
+    <sql id="base_query_condition_extend">
+        <if test="query.titleFuzzy != null and query.titleFuzzy != ''">
+            AND title LIKE concat('%', #{query.titleFuzzy}, '%')
+        </if>
+        <if test="query.createdTimeStart != null">
+            <![CDATA[ AND created_time >= #{query.createdTimeStart} ]]>
+        </if>
+        <if test="query.createdTimeEnd != null">
+            <![CDATA[ AND created_time <= #{query.createdTimeEnd} ]]>
+        </if>
+    </sql>
+
+    <sql id="query_condition">
+        <where>
+            <include refid="base_query_condition"/>
+            <include refid="base_query_condition_extend"/>
+        </where>
+    </sql>
+
+    <!-- 查询列表 -->
+    <select id="selectList" resultMap="base_result_map">
+        SELECT <include refid="base_column_list"/> FROM tech_notes <include refid="query_condition"/>
+        <if test="query.orderBy != null">ORDER BY ${query.orderBy}</if>
+        <if test="query.simplePage != null">LIMIT #{query.simplePage.start},#{query.simplePage.end}</if>
+    </select>
+
+    <!-- 查询数量 -->
+    <select id="selectCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM tech_notes <include refid="query_condition"/>
+    </select>
+
+    <!-- 根据Id查询 -->
+    <select id="selectById" resultMap="base_result_map">
+        SELECT <include refid="base_column_list"/> FROM tech_notes WHERE id = #{id}
+    </select>
+
+    <!-- 根据sectionId查询 -->
+    <select id="findBySectionId" resultMap="base_result_map">
+        SELECT <include refid="base_column_list"/> FROM tech_notes WHERE section_id = #{sectionId}
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="com.easy.entity.po.TechNote">
+        <selectKey keyProperty="bean.id" resultType="Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO tech_notes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bean.sectionId != null">section_id,</if>
+            <if test="bean.title != null">title,</if>
+            <if test="bean.content != null">content,</if>
+            <if test="bean.createdTime != null">created_time,</if>
+            <if test="bean.updatedTime != null">updated_time,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="bean.sectionId != null">#{bean.sectionId},</if>
+            <if test="bean.title != null">#{bean.title},</if>
+            <if test="bean.content != null">#{bean.content},</if>
+            <if test="bean.createdTime != null">#{bean.createdTime},</if>
+            <if test="bean.updatedTime != null">#{bean.updatedTime},</if>
+        </trim>
+    </insert>
+
+    <!-- 根据Id更新 -->
+    <update id="updateById" parameterType="com.easy.entity.po.TechNote">
+        UPDATE tech_notes
+        <set>
+            <if test="bean.sectionId != null">section_id = #{bean.sectionId},</if>
+            <if test="bean.title != null">title = #{bean.title},</if>
+            <if test="bean.content != null">content = #{bean.content},</if>
+            <if test="bean.createdTime != null">created_time = #{bean.createdTime},</if>
+            <if test="bean.updatedTime != null">updated_time = #{bean.updatedTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据Id删除 -->
+    <delete id="deleteById">
+        DELETE FROM tech_notes WHERE id = #{id}
+    </delete>
+
+</mapper>
