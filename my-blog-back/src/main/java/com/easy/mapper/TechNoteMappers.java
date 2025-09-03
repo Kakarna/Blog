@@ -3,6 +3,7 @@ package com.easy.mapper;
 import com.easy.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 技术笔记 Mapper 接口
@@ -10,6 +11,24 @@ import java.util.List;
  * @Author: Sena
  */
 public interface TechNoteMappers<T, P> extends BaseMapper {
+
+
+    /**
+     * 查询笔记总数
+     */
+    Integer countAll();
+
+    /**
+     * 统计最近 N 天的笔记数量
+     */
+    Integer countRecent(int days);
+
+
+    List<Map<String, Object>> countByCategory();
+
+
+    List<Map<String, Object>> countByDay(@Param("days") int days);
+
 
     /**
      * 根据ID查询笔记

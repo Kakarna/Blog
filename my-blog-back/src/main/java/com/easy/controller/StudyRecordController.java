@@ -105,6 +105,7 @@ public class StudyRecordController extends ABaseController {
         Claims claims = (Claims) request.getAttribute("claims");
         if (claims == null || !"admin".equals(claims.get("role"))) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
             return ResponseVO.error("无权限访问");
         }
         Integer id = param.get("id");

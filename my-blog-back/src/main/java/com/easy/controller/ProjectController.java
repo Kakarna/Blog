@@ -27,6 +27,13 @@ public class ProjectController extends ABaseController {
     private ProjectService projectService;
 
 
+    @GetMapping("/count")
+    public ResponseVO<Integer> getProjectCount() {
+        int count = projectService.countAll();
+        return ResponseVO.ok(count);
+    }
+
+
     /**
      * 备注: 目前使用到的接口
      */
