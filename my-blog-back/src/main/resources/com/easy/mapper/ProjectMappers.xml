@@ -85,6 +85,11 @@
 		<include refid="query_condition"/>
 	</select>
 
+	<!-- 统计所有项目数量 -->
+	<select id="countAll" resultType="int">
+		SELECT COUNT(*) FROM projects
+	</select>
+
 	<!-- 单条插入 -->
 	<insert id="insert" parameterType="com.easy.entity.po.Project" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO projects

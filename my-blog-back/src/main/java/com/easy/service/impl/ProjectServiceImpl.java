@@ -30,6 +30,12 @@ public class ProjectServiceImpl implements ProjectService {
 	@Resource
 	private ProjectFileMappers<ProjectFile,ProjectQuery> projectFileMappers;
 
+
+	@Override
+	public Integer countAll() {
+		return projectMappers.countAll();
+	}
+
 	public void addProjectWithFiles(ProjectVO projectVO) {
 		Project project = new Project();
 		project.setName(projectVO.getName());

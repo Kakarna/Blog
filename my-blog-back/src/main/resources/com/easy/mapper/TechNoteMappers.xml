@@ -59,6 +59,16 @@
         <if test="query.simplePage != null">LIMIT #{query.simplePage.start},#{query.simplePage.end}</if>
     </select>
 
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM tech_notes
+    </select>
+
+    <select id="countRecent" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM tech_notes
+        WHERE updated_time >= NOW() - INTERVAL #{days} DAY
+    </select>
+
     <!-- 查询数量 -->
     <select id="selectCount" resultType="java.lang.Integer">
         SELECT count(1) FROM tech_notes <include refid="query_condition"/>
@@ -113,5 +123,24 @@
     <delete id="deleteById">
         DELETE FROM tech_notes WHERE id = #{id}
     </delete>
+
+    <select id="countByCategory" resultType="map">
+        SELECT s.name AS name, COUNT(n.id) AS value
+        FROM tech_notes n
+            JOIN tech_sections s ON n.section_id = s.id
+        GROUP BY n.section_id
+
+    </select>
+
+    <select id="countByDay" resultType="map">
+        SELECT DATE_FORMAT(created_time, '%Y-%m-%d') AS date,
+           COUNT(*) AS count
+        FROM tech_notes
+        WHERE created_time >= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)
+        GROUP BY DATE_FORMAT(created_time, '%Y-%m-%d')
+        ORDER BY date ASC
+    </select>
+
+
 
 </mapper>

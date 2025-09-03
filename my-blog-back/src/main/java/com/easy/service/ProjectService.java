@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ProjectService {
 
+    Integer countAll();
+
     void addProjectWithFiles(ProjectVO projectVO);
 
     List<Project> findListByParam(ProjectQuery query);

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 技术笔记表 Service 实现类
@@ -22,6 +23,32 @@ public class TechNoteServiceImpl implements TechNoteService {
 
     @Resource
     private TechNoteMappers<TechNote, TechNoteQuery> techNoteMappers;
+
+    @Override
+    public Integer countAll() {
+        return techNoteMappers.countAll();
+    }
+
+    @Override
+    public Integer countRecent(int days) {
+        return techNoteMappers.countRecent(days);
+    }
+
+    /**
+     * 按分类统计数量（饼图）
+     */
+    @Override
+    public List<Map<String, Object>> countByCategory() {
+        return techNoteMappers.countByCategory();
+    }
+
+    /**
+     * 按天统计数量（折线图）
+     */
+    @Override
+    public List<Map<String, Object>> countByDay(int days) {
+        return techNoteMappers.countByDay(days);
+    }
 
     @Override
     public List<TechNote> findListByParam(TechNoteQuery query) {

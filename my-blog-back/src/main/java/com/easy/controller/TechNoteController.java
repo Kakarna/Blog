@@ -36,6 +36,11 @@ public class TechNoteController extends ABaseController {
      * 备注: 目前使用到的接口
      */
 
+    @GetMapping("/countAll")
+    public ResponseVO countAll() {
+        return ResponseVO.ok(techNoteService.countAll());
+    }
+
     //添加笔记
     @PostMapping("add")
     public ResponseVO<TechNote> add(@RequestBody TechNoteAddVO addVO, HttpServletRequest request, HttpServletResponse response) {
@@ -135,5 +140,7 @@ public class TechNoteController extends ABaseController {
         techNoteService.deleteById(id);
         return ResponseVO.ok("删除成功");
     }
+
+
 
 }

@@ -5,6 +5,7 @@ import com.easy.entity.po.TechNote;
 import com.easy.entity.query.TechNoteQuery;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 技术笔记表 Service
@@ -12,6 +13,27 @@ import java.util.List;
  * @Author: Sena
  */
 public interface TechNoteService {
+
+    /**
+     * 查询笔记总数
+     * @return 数量
+     */
+    Integer countAll();
+
+
+    /**
+     * 统计最近 N 天内更新的笔记数量
+     */
+    Integer countRecent(int days);
+
+
+    /**
+     * 统计不同分区的笔记数量
+     */
+    List<Map<String, Object>> countByCategory();
+
+    List<Map<String, Object>> countByDay(int days);
+
 
     /**
      * 根据条件查询列表

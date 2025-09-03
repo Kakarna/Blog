@@ -16,7 +16,7 @@ import java.util.List;
 
 @Component
 public class JwtFilter implements Filter {
-    private static final List<String> ADMIN_URLS = Arrays.asList("/techSection/add", "/techSection/update/*", "/techSection/delete/*", "/techNote/add", "/techNote/update/*", "/techNote/delete/*", "/studyRecord/add", "/studyRecord/update/*", "/studyRecord/delete/*", "/project/addWithFiles","/projectFile/deleteByProjectFile/*","/project/delete/*");
+    private static final List<String> ADMIN_URLS = Arrays.asList("/techSection/add", "/techSection/update/*", "/techSection/delete/*", "/techNote/add", "/techNote/update", "/techNote/delete", "/studyRecord/add", "/studyRecord/update", "/studyRecord/delete", "/project/addWithFiles","/projectFile/deleteByProjectFile/*","/project/delete/*");
     private final JwtUtils jwtUtils;
 
     @Autowired

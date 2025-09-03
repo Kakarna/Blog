@@ -53,4 +53,6 @@ public interface ProjectMappers<T, P> extends BaseMapper<T, P> {
      * @return 受影响行数
      */
     Integer deleteByName(@Param("name") String name);
+
+    int countAll();
 }
