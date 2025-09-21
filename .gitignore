@@ -10,6 +10,9 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+# Application properties with sensitive data
+my-blog-back/src/main/resources/application.properties
+
 # Package Files #
 *.jar
 *.war
