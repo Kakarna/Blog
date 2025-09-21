@@ -23,11 +23,15 @@
  		<result column="create_time" property="createTime"/>
 		<!-- 更新时间 -->
  		<result column="update_time" property="updateTime"/>
+		<!-- 新增公共账号字段 -->
+		<result column="is_public" property="isPublic"/>
+		<!-- 新增个性签名 -->
+		<result column="signature" property="signature"/>
 	</resultMap>
 
 	<!--通用查询结果列-->
 	<sql id="base_column_list">
-	id,username,password,email,nickname,avatar,role,create_time,update_time
+	id,username,password,email,nickname,avatar,role,create_time,update_time,is_public,signature
 	</sql>
 	<!--基础查询条件-->
 	<sql id="base_query_condition">
@@ -58,6 +62,13 @@
 		<if test="query.updateTime != null ">
 			and update_time = #{query.updateTime}
 		</if>
+		<!-- 新增查询条件 -->
+		<if test="query.isPublic != null">
+			and is_public = #{query.isPublic}
+		</if>
+		<if test="query.signature != null and query.signature != ''">
+		 and signature = #{query.signature}
+		 </if>
 	</sql>
 
 	<!--扩展的查询条件-->
@@ -92,6 +103,9 @@
 		<if test="query.updateTimeEnd != null and query.updateTimeEnd != ''">
 			<![CDATA[ AND update_time < date_sub(str_to_date(#{query.updateTimeEnd}, '%Y-%m-%d'), interval -1 day) ]]>
 		</if>
+		<if test="query.signatureFuzzy != null and query.signatureFuzzy != ''">
+		 and signature like concat('%', #{query.signatureFuzzy}, '%')
+		 </if>
 	</sql>
 	<!--扩展的查询条件-->
 	<sql id="query_condition">
@@ -113,79 +127,34 @@
 
 	<!--单条插入-->
 	<insert id="insert" parameterType="com.easy.entity.po.User">
-		<selectKey keyProperty="bean.id" resultType="Integer" order="AFTER">
-			SELECT LAST_INSERT_ID()
-		</selectKey>
+		<selectKey keyProperty="bean.id" resultType="Integer" order="AFTER">SELECT LAST_INSERT_ID()</selectKey>
 		INSERT INTO user
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="bean.id != null">
-				id,
-			</if>
-
-			<if test="bean.username != null">
-				username,
-			</if>
-
-			<if test="bean.password != null">
-				password,
-			</if>
-
-			<if test="bean.email != null">
-				email,
-			</if>
-
-			<if test="bean.nickname != null">
-				nickname,
-			</if>
-
-			<if test="bean.avatar != null">
-				avatar,
-			</if>
-
-			<if test="bean.role != null">
-				role,
-			</if>
-
-			<if test="bean.createTime != null">
-				create_time,
-			</if>
-
-			<if test="bean.updateTime != null">
-				update_time,
-			</if>
-
+			<if test="bean.id != null">id,</if>
+			<if test="bean.username != null">username,</if>
+			<if test="bean.password != null">password,</if>
+			<if test="bean.email != null">email,</if>
+			<if test="bean.nickname != null">nickname,</if>
+			<if test="bean.avatar != null">avatar,</if>
+			<if test="bean.role != null">role,</if>
+			<if test="bean.createTime != null">create_time,</if>
+			<if test="bean.updateTime != null">update_time,</if>
+			<if test="bean.isPublic != null">is_public,</if>
+			<if test="bean.signature != null">signature,</if>
 		</trim>
 		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
-			<if test="bean.id != null">
-				#{bean.id},
-			</if>
-			<if test="bean.username != null">
-				#{bean.username},
-			</if>
-			<if test="bean.password != null">
-				#{bean.password},
-			</if>
-			<if test="bean.email != null">
-				#{bean.email},
-			</if>
-			<if test="bean.nickname != null">
-				#{bean.nickname},
-			</if>
-			<if test="bean.avatar != null">
-				#{bean.avatar},
-			</if>
-			<if test="bean.role != null">
-				#{bean.role},
-			</if>
-			<if test="bean.createTime != null">
-				#{bean.createTime},
-			</if>
-			<if test="bean.updateTime != null">
-				#{bean.updateTime},
-			</if>
+			<if test="bean.id != null">#{bean.id},</if>
+			<if test="bean.username != null">#{bean.username},</if>
+			<if test="bean.password != null">#{bean.password},</if>
+			<if test="bean.email != null">#{bean.email},</if>
+			<if test="bean.nickname != null">#{bean.nickname},</if>
+			<if test="bean.avatar != null">#{bean.avatar},</if>
+			<if test="bean.role != null">#{bean.role},</if>
+			<if test="bean.createTime != null">#{bean.createTime},</if>
+			<if test="bean.updateTime != null">#{bean.updateTime},</if>
+			<if test="bean.isPublic != null">#{bean.isPublic},</if>
+			<if test="bean.signature != null">#{bean.signature},</if>
 		</trim>
-
-
 	</insert>
 
 
@@ -309,88 +278,85 @@
 		SELECT <include refid="base_column_list"/> FROM user WHERE id = #{id}
 	</select>
 <!--根据Id更新-->
-	<update id="updateById" parameterType="com.easy.entity.po.User">
+	<update id="updateById" parameterType="map">
 		UPDATE user
 		<set>
-			<if test="bean.id != null">
-				id =#{bean.id},
-			</if>
-			<if test="bean.username != null">
-				username =#{bean.username},
-			</if>
-			<if test="bean.password != null">
-				password =#{bean.password},
-			</if>
-			<if test="bean.email != null">
-				email =#{bean.email},
-			</if>
-			<if test="bean.nickname != null">
-				nickname =#{bean.nickname},
-			</if>
-			<if test="bean.avatar != null">
-				avatar =#{bean.avatar},
-			</if>
-			<if test="bean.role != null">
-				role =#{bean.role},
-			</if>
-			<if test="bean.createTime != null">
-				create_time =#{bean.createTime},
-			</if>
-			<if test="bean.updateTime != null">
-				update_time =#{bean.updateTime},
-			</if>
+			<if test="bean.username != null">username = #{bean.username},</if>
+			<if test="bean.password != null">password = #{bean.password},</if>
+			<if test="bean.email != null">email = #{bean.email},</if>
+			<if test="bean.nickname != null">nickname = #{bean.nickname},</if>
+			<if test="bean.avatar != null">avatar = #{bean.avatar},</if>
+			<if test="bean.role != null">role = #{bean.role},</if>
+			<if test="bean.createTime != null">create_time = #{bean.createTime},</if>
+			<if test="bean.updateTime != null">update_time = #{bean.updateTime},</if>
+			<if test="bean.isPublic != null">is_public = #{bean.isPublic},</if>
+			<if test="bean.signature != null">signature = #{bean.signature},</if>
 		</set>
-		where id = #{id}
+		WHERE id = #{id}
 	</update>
 
-<!--根据Id删除-->
+
+
+	<!--根据Id删除-->
 	<delete id="deleteById">
 		DELETE FROM user WHERE id = #{id}
 	</delete>
-
 
 <!--根据Username查询-->
 	<select id="selectByUsername" resultMap="base_result_map">
 		SELECT <include refid="base_column_list"/> FROM user WHERE username = #{username}
 	</select>
+
 <!--根据Username更新-->
 	<update id="updateByUsername" parameterType="com.easy.entity.po.User">
 		UPDATE user
 		<set>
-			<if test="bean.id != null">
-				id =#{bean.id},
-			</if>
-			<if test="bean.username != null">
-				username =#{bean.username},
-			</if>
-			<if test="bean.password != null">
-				password =#{bean.password},
-			</if>
-			<if test="bean.email != null">
-				email =#{bean.email},
-			</if>
-			<if test="bean.nickname != null">
-				nickname =#{bean.nickname},
-			</if>
-			<if test="bean.avatar != null">
-				avatar =#{bean.avatar},
-			</if>
-			<if test="bean.role != null">
-				role =#{bean.role},
-			</if>
-			<if test="bean.createTime != null">
-				create_time =#{bean.createTime},
-			</if>
-			<if test="bean.updateTime != null">
-				update_time =#{bean.updateTime},
-			</if>
+			<if test="bean.username != null">username = #{bean.username},</if>
+			<if test="bean.password != null">password = #{bean.password},</if>
+			<if test="bean.email != null">email = #{bean.email},</if>
+			<if test="bean.nickname != null">nickname = #{bean.nickname},</if>
+			<if test="bean.avatar != null">avatar = #{bean.avatar},</if>
+			<if test="bean.role != null">role = #{bean.role},</if>
+			<if test="bean.updateTime != null">update_time = #{bean.updateTime},</if>
+			<if test="bean.isPublic != null">is_public = #{bean.isPublic},</if>
+			<if test="bean.signature != null">signature = #{bean.signature},</if>
 		</set>
-		where username = #{username}
+		WHERE username = #{username}
 	</update>
 
 <!--根据Username删除-->
 	<delete id="deleteByUsername">
 		DELETE FROM user WHERE username = #{username}
 	</delete>
+	<!-- 根据Email查询 -->
+	<select id="selectByEmail" resultMap="base_result_map">
+		SELECT <include refid="base_column_list"/>
+		FROM user
+		WHERE email = #{email}
+	</select>
+
+	<!-- 根据Email更新 -->
+	<update id="updateByEmail" parameterType="com.easy.entity.po.User">
+		UPDATE user
+		<set>
+			<if test="bean.username != null">username = #{bean.username},</if>
+			<if test="bean.password != null">password = #{bean.password},</if>
+			<if test="bean.nickname != null">nickname = #{bean.nickname},</if>
+			<if test="bean.avatar != null">avatar = #{bean.avatar},</if>
+			<if test="bean.role != null">role = #{bean.role},</if>
+			<if test="bean.updateTime != null">update_time = #{bean.updateTime},</if>
+			<if test="bean.isPublic != null">is_public = #{bean.isPublic},</if>
+			<if test="bean.signature != null">signature = #{bean.signature},</if>
+		</set>
+		WHERE email = #{bean.email}
+	</update>
+
+	<!-- 根据Email删除 -->
+	<delete id="deleteByEmail">
+		DELETE FROM user WHERE email = #{email}
+	</delete>
+
+
+
 
 </mapper>

@@ -9,4 +9,6 @@ public class UserRegisterVO {
     private String password;
     private String email;
     private String nickname;
+    private String code;   // 邮箱验证码
+    private Boolean IsPrivate;
 }

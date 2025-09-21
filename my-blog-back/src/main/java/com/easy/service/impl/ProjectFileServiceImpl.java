@@ -24,7 +24,35 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     private ProjectFileMappers<ProjectFile, ProjectFileQuery> projectFileMappers;
 
     /**
+     * 根据项目Id查询文件列表
+     * 调用方: ProjectFileController
+     */
+    @Override
+    public List<ProjectFile> getProjectFileByProjectId(Integer projectId){
+        return projectFileMappers.selectListByProjectId(projectId);
+    }
+
+    /**
+     * 根据项目ID和路径查询文件内容
+     * 调用方: ProjectFileController
+     */
+    @Override
+    public List<ProjectFile> getProjectFileByProjectIdAndPath(Integer projectId, String path) {
+        return projectFileMappers.selectByProjectIdAndPath(projectId, path);
+    }
+
+    /**
+     * 根据ProjectId删除项目所有文件
+     * 调用方: ProjectController
+     */
+    @Override
+    public Integer deleteProjectFileByProjectId(Integer projectId) {
+        return projectFileMappers.deleteByProjectId(projectId);
+    }
+
+    /**
      * 根据条件查询列表
+     * 调用方: ProjectFileServiceImpl.findListByPage
      */
     @Override
     public List<ProjectFile> findListByParam(ProjectFileQuery query) {
@@ -33,6 +61,7 @@ public class ProjectFileServiceImpl implements ProjectFileService {
 
     /**
      * 根据条件查询数量
+     * 调用方: ProjectFileServiceImpl.findListByPage
      */
     @Override
     public Integer findCountByParam(ProjectFileQuery query) {
@@ -41,6 +70,7 @@ public class ProjectFileServiceImpl implements ProjectFileService {
 
     /**
      * 分页查询
+     * 调用方: ProjectFileController
      */
     @Override
     public PaginationResultVO<ProjectFile> findListByPage(ProjectFileQuery query) {
@@ -53,7 +83,8 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     }
 
     /**
-     * 新增
+     * 新增项目文件
+     * 调用方: ProjectServiceImpl.addProjectWithFiles
      */
     @Override
     public Integer add(ProjectFile projectFile) {
@@ -63,8 +94,12 @@ public class ProjectFileServiceImpl implements ProjectFileService {
         return projectFileMappers.insert(projectFile);
     }
 
+    // ==================== 预留接口 ====================
+    // 以下接口当前未被使用
+
     /**
-     * 批量新增
+     * 批量新增项目文件
+     * 【预留接口】
      */
     @Override
     public Integer addBatch(List<ProjectFile> projectFileList) {
@@ -80,7 +115,8 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     }
 
     /**
-     * 批量新增或修改
+     * 批量新增或修改项目文件
+     * 【预留接口】
      */
     @Override
     public Integer addOrUpdateBatch(List<ProjectFile> projectFileList) {
@@ -98,7 +134,8 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     }
 
     /**
-     * 根据Id查询
+     * 根据Id查询项目文件
+     * 【预留接口】
      */
     @Override
     public ProjectFile getProjectFileById(Integer id) {
@@ -106,7 +143,8 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     }
 
     /**
-     * 根据Id更新
+     * 根据Id更新项目文件
+     * 【预留接口】
      */
     @Override
     public Integer updateProjectFileById(ProjectFile projectFile, Integer id) {
@@ -115,7 +153,8 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     }
 
     /**
-     * 根据Id删除
+     * 根据Id删除项目文件
+     * 【预留接口】
      */
     @Override
     public Integer deleteProjectFileById(Integer id) {
@@ -123,32 +162,8 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     }
 
     /**
-     * 根据ProjectId删除
-     */
-    @Override
-    public Integer deleteProjectFileByProjectId(Integer projectId) {
-        return projectFileMappers.deleteByProjectId(projectId);
-    }
-
-    /**
-     * 根据项目Id查询
-     */
-    @Override
-    public  List<ProjectFile> getProjectFileByProjectId(Integer projectId){
-        return projectFileMappers.selectListByProjectId(projectId);
-    }
-
-
-    /**
-     * 根据项目ID和路径查询单条
-     */
-    @Override
-    public List<ProjectFile> getProjectFileByProjectIdAndPath(Integer projectId, String path) {
-        return projectFileMappers.selectByProjectIdAndPath(projectId, path);
-    }
-
-    /**
-     * 根据项目ID和路径更新
+     * 根据项目ID和路径更新文件
+     * 【预留接口】
      */
     @Override
     public Integer updateProjectFileByProjectIdAndPath(ProjectFile projectFile, Integer projectId, String path) {
@@ -157,7 +172,8 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     }
 
     /**
-     * 根据项目ID和路径删除
+     * 根据项目ID和路径删除文件
+     * 【预留接口】
      */
     @Override
     public Integer deleteProjectFileByProjectIdAndPath(Integer projectId, String path) {

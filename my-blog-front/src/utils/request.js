@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import router from '@/router'
 const request = axios.create({
   baseURL: '/api',
-  timeout: 5000
+  timeout: 60000 // 设置为 60 秒，避免大文件超时
 })
 
 

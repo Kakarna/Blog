@@ -18,8 +18,17 @@ public interface UserService {
     /**
      * 目前用到的
      */
+
+    //获取公共账号 @return 返回 is_public=1 的用户，如果不存在则返回 null
+    User getPublicUser();
+
+    //登录接口
     ResponseVO login(UserLoginVO loginVO);
 
+    //邮箱验证码接口
+    ResponseVO sendEmailCode(String email,boolean checkUserEmailUnique);
+
+    //注册接口
     ResponseVO register(UserRegisterVO registerVO);
 
 

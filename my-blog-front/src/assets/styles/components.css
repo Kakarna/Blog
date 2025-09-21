@@ -1,0 +1,213 @@
+/* 组件主题样式 */
+
+/* 卡片样式 */
+.theme-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+.theme-card:hover {
+  box-shadow: 0 6px 12px var(--shadow-color);
+}
+
+/* 面板样式 */
+.theme-panel {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+/* 按钮样式 */
+.theme-button {
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.theme-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.theme-button-secondary {
+  background-color: var(--bg-translucent-medium);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.theme-button-secondary:hover {
+  background-color: var(--bg-translucent-light);
+}
+
+/* 输入框样式 */
+.theme-input {
+  background-color: var(--bg-translucent-light);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.theme-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+/* 选择框样式 */
+.theme-select {
+  background-color: var(--bg-translucent-light);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.theme-select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+/* 标题样式 */
+.theme-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.theme-subtitle {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* 文本样式 */
+.theme-text {
+  color: var(--text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-text-tertiary {
+  color: var(--text-tertiary);
+}
+
+/* 链接样式 */
+.theme-link {
+  color: var(--accent-color);
+  transition: all 0.3s ease;
+}
+
+.theme-link:hover {
+  color: var(--accent-hover);
+}
+
+/* 分割线样式 */
+.theme-divider {
+  border-color: var(--border-color);
+}
+
+/* 背景样式 */
+.theme-bg-primary {
+  background-color: var(--bg-primary);
+}
+
+.theme-bg-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.theme-bg-tertiary {
+  background-color: var(--bg-tertiary);
+}
+
+.theme-bg-translucent {
+  background-color: var(--bg-translucent-light);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 表格样式 */
+.theme-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.theme-table th {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.theme-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.theme-table tr:hover {
+  background-color: var(--bg-translucent-subtle);
+}
+
+/* 列表样式 */
+.theme-list-item {
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 0;
+  transition: all 0.3s ease;
+}
+
+.theme-list-item:hover {
+  background-color: var(--bg-translucent-subtle);
+}
+
+/* 徽章样式 */
+.theme-badge {
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.theme-badge-secondary {
+  background-color: var(--bg-translucent-medium);
+  color: var(--text-primary);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* 阴影样式 */
+.theme-shadow {
+  box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.theme-shadow-md {
+  box-shadow: 0 6px 12px var(--shadow-color);
+}
+
+.theme-shadow-lg {
+  box-shadow: 0 10px 15px var(--shadow-color);
+}
+
+/* 过渡效果 */
+.theme-transition {
+  transition: all 0.3s ease;
+}

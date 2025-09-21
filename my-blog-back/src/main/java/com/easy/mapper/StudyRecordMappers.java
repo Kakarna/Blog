@@ -16,26 +16,28 @@ public interface StudyRecordMappers<T, P> extends BaseMapper {
 
     /**
      * 根据Id查询
-     * @return
+     * 调用方: StudyRecordServiceImpl
      */
     T selectById(@Param("id") Integer id);
 
+    // ==================== 预留接口 ====================
+    // 以下接口当前未被使用
+
     /**
      * 根据Id更新
-     * @return
+     * 【预留接口】
      */
     Integer updateById(@Param("bean") T t, @Param("id") Integer id);
 
     /**
      * 根据Id删除
-     * @return
+     * 【预留接口】
      */
     Integer deleteById(@Param("id") Integer id);
 
     /**
      * 根据用户ID查询学习记录列表
-     * @param userId 用户ID
-     * @return
+     * 调用方: StudyRecordServiceImpl
      */
     List<T> selectByUserId(@Param("userId") Integer userId);
 

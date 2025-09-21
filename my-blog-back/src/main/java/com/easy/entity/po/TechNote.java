@@ -39,6 +39,11 @@ public class TechNote implements Serializable {
     private String content;
 
     /**
+     * 关联用户ID
+     */
+    private Integer userId;
+
+    /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -52,10 +57,12 @@ public class TechNote implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
 
+
     @Override
     public String toString() {
         return "主键ID:" + (id == null ? " 空 " : id)
                 + ",分区ID:" + (sectionId == null ? " 空 " : sectionId)
+                + ",用户ID:" + (userId == null ? " 空 " : userId)
                 + ",标题:" + (title == null ? " 空 " : title)
                 + ",内容:" + (content == null ? " 空 " : content)
                 + ",创建时间:" + (createdTime == null ? " 空 " : DateUtils.format(createdTime, DateTimePatternEnum.YYYY_MM_DD_HH_MM_SS.getPattern()))

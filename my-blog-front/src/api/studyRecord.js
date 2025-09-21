@@ -1,11 +1,20 @@
-// src/api/studyRecord.js
 import request from '@/utils/request'
 
-export function fetchStudyRecords(queryVO) {
+// 公共记录接口（无需登录）
+export function fetchPublicStudyRecords(queryVO) {
   return request({
-    url: '/studyRecord/loadDataList',
+    url: '/studyRecord/loadPublicDataList',
     method: 'post',
-    data: queryVO // 使用data传递分页参数，因为后端使用@RequestBody接收
+    data: queryVO
+  })
+}
+
+// 私人记录接口（需登录，后端会从 token 获取 userId）
+export function fetchPrivateStudyRecords(queryVO) {
+  return request({
+    url: '/studyRecord/loadPrivateDataList',
+    method: 'post',
+    data: queryVO
   })
 }
 

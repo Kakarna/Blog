@@ -6,7 +6,6 @@ import com.easy.entity.query.ProjectQuery;
 import com.easy.entity.query.SimplePage;
 import com.easy.entity.vo.PaginationResultVO;
 import com.easy.entity.vo.ProjectVO;
-import com.easy.entity.vo.ResponseVO;
 import com.easy.enums.PageSize;
 import com.easy.mapper.ProjectFileMappers;
 import com.easy.mapper.ProjectMappers;
@@ -14,6 +13,8 @@ import com.easy.service.ProjectService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 
@@ -30,13 +31,34 @@ public class ProjectServiceImpl implements ProjectService {
 	@Resource
 	private ProjectFileMappers<ProjectFile,ProjectQuery> projectFileMappers;
 
-
+	/**
+	 * 统计所有项目数量
+	 * 调用方: DashboardController/ProjectController
+	 */
 	@Override
 	public Integer countAll() {
 		return projectMappers.countAll();
 	}
 
-	public void addProjectWithFiles(ProjectVO projectVO) {
+	/**
+	 * 添加项目及其关联文件
+	 * 调用方: ProjectController
+	 */
+	public void addProjectWithFiles(ProjectVO projectVO, List<ProjectFile> files, Integer maxFileSizeKB) {
+		// 添加空值检查
+		if (projectVO == null) {
+			throw new IllegalArgumentException("projectVO 不能为 null");
+		}
+
+		if (files == null) {
+			files = new ArrayList<>(); // 使用空列表而不是 null
+		}
+
+		if (maxFileSizeKB == null) {
+			maxFileSizeKB = 1024; // 默认值
+		}
+
+		// 1. 保存项目基础信息
 		Project project = new Project();
 		project.setName(projectVO.getName());
 		project.setDescription(projectVO.getDescription());
@@ -44,28 +66,34 @@ public class ProjectServiceImpl implements ProjectService {
 		project.setReadme(projectVO.getReadme());
 		project.setCreateTime(new Date());
 		project.setUpdateTime(new Date());
+		project.setUserId(projectVO.getUserId());
 		projectMappers.insert(project);
 
-		Integer projectId = project.getId();  // 插入后获取ID
+		Integer projectId = project.getId();
 
-		List<ProjectFile> files = projectVO.getFiles();
-		if (files != null) {
-			for (ProjectFile fileVO : files) {
-				ProjectFile file = new ProjectFile();
-				file.setProjectId(projectId);
-				file.setPath(fileVO.getPath());
-				file.setContent(fileVO.getContent());
-				file.setIsDir(fileVO.getIsDir());  // 这里赋值isDir
-				projectFileMappers.insert(file);
+		// 2. 保存文件
+		for (ProjectFile pf : files) {
+			pf.setProjectId(projectId);
+			// 确保 isDir 有值
+			if (pf.getIsDir() == null) {
+				pf.setIsDir(false);
 			}
+
+			// 处理内容
+			if (pf.getContent() != null) {
+				// 仅保留小文件的内容，超过限制的已经是 null
+				if (pf.getContent().getBytes(StandardCharsets.UTF_8).length > maxFileSizeKB * 1024L) {
+					pf.setContent(null);
+				}
+			}
+
+			projectFileMappers.insert(pf);
 		}
 	}
 
-
-
-
 	/**
 	 * 根据条件查询列表
+	 * 调用方: ProjectController/SearchController
 	 */
 	@Override
 	public List<Project> findListByParam(ProjectQuery query) {
@@ -74,6 +102,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	/**
 	 * 根据条件查询数量
+	 * 调用方: ProjectController/SearchController
 	 */
 	@Override
 	public Integer findCountByParam(ProjectQuery query) {
@@ -82,6 +111,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	/**
 	 * 分页查询
+	 * 调用方: ProjectController/SearchController
 	 */
 	@Override
 	public PaginationResultVO<Project> findListByPage(ProjectQuery query) {
@@ -94,7 +124,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	/**
-	 * 新增
+	 * 新增项目
+	 * 调用方: ProjectServiceImpl.addProjectWithFiles
 	 */
 	@Override
 	public Integer add(Project project) {
@@ -108,7 +139,50 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	/**
-	 * 批量新增
+	 * 根据Id查询项目
+	 * 调用方: ProjectController
+	 */
+	@Override
+	public Project getProjectById(Integer id) {
+		return projectMappers.selectById(id);
+	}
+
+	/**
+	 * 根据Id删除项目
+	 * 调用方: ProjectController
+	 */
+	@Override
+	public Integer deleteProjectById(Integer id) {
+		return projectMappers.deleteById(id);
+	}
+
+	/**
+	 * 获取用户私有项目
+	 * 调用方: ProjectController
+	 */
+	@Override
+	public PaginationResultVO<Project> getPrivateProjects(ProjectQuery query, Integer userId) {
+		if (userId == null) {
+			throw new IllegalArgumentException("用户ID不能为空");
+		}
+		
+		// 设置默认分页参数，避免空指针异常
+		Integer pageSize = query.getPageSize() == null ? PageSize.SIZE15.getSize() : query.getPageSize();
+		Integer pageNo = query.getPageNo() == null ? 1 : query.getPageNo();
+		
+		List<Project> projects = projectMappers.findByUserId(userId);
+		int totalCount = projects.size();
+		int totalPage = (int) Math.ceil((double)totalCount / pageSize);
+		
+		return new PaginationResultVO<>(totalCount, pageSize, pageNo, totalPage, projects);
+	}
+
+	// ==================== 预留接口 ====================
+	// 以下接口当前未被使用
+
+	/**
+	 * 批量新增项目
+	 * 【预留接口】
 	 */
 	@Override
 	public Integer addBatch(List<Project> projectList) {
@@ -125,7 +199,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	/**
-	 * 批量新增或修改
+	 * 批量新增或修改项目
+	 * 【预留接口】
 	 */
 	@Override
 	public Integer addOrUpdateBatch(List<Project> projectList) {
@@ -143,15 +218,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	/**
-	 * 根据Id查询
-	 */
-	@Override
-	public Project getProjectById(Integer id) {
-		return projectMappers.selectById(id);
-	}
-
-	/**
-	 * 根据Id更新
+	 * 根据Id更新项目
+	 * 【预留接口】
 	 */
 	@Override
 	public Integer updateProjectById(Project project, Integer id) {
@@ -160,15 +228,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	/**
-	 * 根据Id删除
-	 */
-	@Override
-	public Integer deleteProjectById(Integer id) {
-		return projectMappers.deleteById(id);
-	}
-
-	/**
-	 * 根据Name查询
+	 * 根据Name查询项目
+	 * 【预留接口】
 	 */
 	@Override
 	public Project getProjectByName(String name) {
@@ -176,7 +237,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	/**
-	 * 根据Name更新
+	 * 根据Name更新项目
+	 * 【预留接口】
 	 */
 	@Override
 	public Integer updateProjectByName(Project project, String name) {
@@ -185,7 +247,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	/**
-	 * 根据Name删除
+	 * 根据Name删除项目
+	 * 【预留接口】
 	 */
 	@Override
 	public Integer deleteProjectByName(String name) {

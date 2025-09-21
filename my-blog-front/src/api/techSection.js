@@ -1,7 +1,17 @@
 import request from '@/utils/request'
 
-export function getSectionList() {
-  return request.get('/techSection/loadDataList')
+
+// 获取公共账号分区
+export function getPublicSections() {
+  return request({
+    url: '/techSection/publicUser',
+    method: 'get'
+  })
+}
+
+
+export function getPrivateSections() {
+  return request.get('/techSection/privateUser')
 }
 
 export function addSection(data) {

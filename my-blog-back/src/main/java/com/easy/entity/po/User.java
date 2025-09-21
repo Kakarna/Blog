@@ -53,7 +53,18 @@ public class User implements Serializable {
      */
 	private String role;
 
-    /**
+	/**
+	 * 是否公共接口
+	 */
+	private Integer isPublic; // 1 = 公共账号，0 = 普通用户
+
+	/**
+	 * 个性签名
+	 */
+	private String signature; // 个性签名
+
+
+	/**
      * 注册时间
      */
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

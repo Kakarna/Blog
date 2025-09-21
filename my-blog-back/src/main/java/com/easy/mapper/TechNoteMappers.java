@@ -1,6 +1,7 @@
 package com.easy.mapper;
 
 import com.easy.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
@@ -15,23 +16,34 @@ public interface TechNoteMappers<T, P> extends BaseMapper {
 
     /**
      * 查询笔记总数
+     * 调用方: DashboardServiceImpl/TechNoteServiceImpl
      */
     Integer countAll();
 
     /**
      * 统计最近 N 天的笔记数量
+     * 调用方: DashboardServiceImpl
      */
     Integer countRecent(int days);
 
 
+    /**
+     * 按分类统计笔记数量
+     * 调用方: DashboardServiceImpl
+     */
     List<Map<String, Object>> countByCategory();
 
 
+    /**
+     * 按天统计笔记数量
+     * 调用方: DashboardServiceImpl
+     */
     List<Map<String, Object>> countByDay(@Param("days") int days);
 
 
     /**
      * 根据ID查询笔记
+     * 调用方: TechNoteServiceImpl
      */
     T selectById(@Param("id") Integer id);
 
@@ -60,4 +72,19 @@ public interface TechNoteMappers<T, P> extends BaseMapper {
      */
     Integer deleteByTitle(@Param("title") String title);
 
+    /**
+     * 自定义插入方法，包含所有字段
+     */
+    @Insert("INSERT INTO tech_notes (section_id, title, content, user_id) " +
+            "VALUES (#{sectionId}, #{title}, #{content}, #{userId})")
+    Integer insertWithUserId(@Param("sectionId") Integer sectionId,
+                           @Param("title") String title,
+                           @Param("content") String content,
+                           @Param("userId") Integer userId);
+
+    /**
+     * 根据用户ID查询笔记
+     * 调用方: TechNoteServiceImpl
+     */
+    List<T> findByUserId(@Param("userId") Integer userId);
 }

@@ -1,63 +1,70 @@
 <template>
-  <div class="p-6 max-w-6xl mx-auto">
+  <div class="p-6 max-w-6xl mx-auto theme-bg-primary">
     <!-- 头部 -->
     <div class="flex justify-between items-start mb-6">
       <div>
-        <h2 class="text-xl font-semibold text-gray-800">撰写笔记</h2>
-        <p class="text-sm text-gray-500">{{ section }}专区</p>
+        <h2 class="text-2xl font-bold theme-text-primary">✏️ 撰写笔记</h2>
+        <p class="text-sm theme-text-secondary">{{ section }} 专区</p>
       </div>
-      <div class="flex gap-2">
-        <RouterLink :to="`/techNotes/${section}`" class="px-3 py-1 text-sm border rounded hover:bg-gray-100 transition">
+      <div>
+        <RouterLink
+          :to="`/techNotes/${section}`"
+          class="px-3 py-1.5 text-sm border rounded-lg theme-shadow hover:theme-bg-hover transition"
+        >
           返回列表
         </RouterLink>
       </div>
     </div>
 
-    <!-- 两栏 -->
+    <!-- 两栏布局 -->
     <div class="flex gap-6">
       <!-- 左侧编辑区 -->
       <div class="flex-1">
-        <input v-model="title"
-          class="w-full border-b px-2 py-3 text-lg font-medium focus:outline-none focus:border-blue-500 mb-4"
-          placeholder="输入笔记标题..." />
+        <!-- 标题输入框 -->
+        <input
+          v-model="title"
+          class="w-full theme-bg-input border border-gray-200 px-3 py-3 text-lg font-medium rounded-lg 
+                 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 transition"
+          placeholder="输入笔记标题..."
+        />
 
         <!-- 工具栏 -->
-        <div class="flex flex-wrap gap-1 mb-4 p-2 border-b">
-          <button @click="editor?.chain().focus().toggleBold().run()"
-            class="p-1 rounded hover:bg-gray-100"><strong>B</strong></button>
-          <button @click="editor?.chain().focus().toggleItalic().run()"
-            class="p-1 rounded hover:bg-gray-100"><em>I</em></button>
-          <button @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"
-            class="p-1 rounded hover:bg-gray-100">标题</button>
-          <button @click="editor?.chain().focus().toggleBulletList().run()" class="p-1 rounded hover:bg-gray-100">•
-            列表</button>
-          <button @click="editor?.chain().focus().toggleCodeBlock().run()" class="p-1 rounded hover:bg-gray-100">{
-            }</button>
-          <button @click="triggerImageUpload" class="p-1 rounded hover:bg-gray-100">图片</button>
-          <button @click="setLink" class="p-1 rounded hover:bg-gray-100">链接</button>
-          <button @click="setColor" class="p-1 rounded hover:bg-gray-100">颜色</button>
+        <div class="flex flex-wrap gap-1 mb-4 p-2 theme-bg-input border rounded-lg shadow-sm">
+          <button @click="editor?.chain().focus().toggleBold().run()" class="toolbar-btn"><strong>B</strong></button>
+          <button @click="editor?.chain().focus().toggleItalic().run()" class="toolbar-btn"><em>I</em></button>
+          <button @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()" class="toolbar-btn">标题</button>
+          <button @click="editor?.chain().focus().toggleBulletList().run()" class="toolbar-btn">• 列表</button>
+          <button @click="editor?.chain().focus().toggleCodeBlock().run()" class="toolbar-btn">{ }</button>
+          <button @click="triggerImageUpload" class="toolbar-btn">图片</button>
+          <button @click="setLink" class="toolbar-btn">链接</button>
+          <button @click="setColor" class="toolbar-btn">颜色</button>
         </div>
 
-        <!-- 隐藏文件上传input -->
+        <!-- 隐藏文件上传 -->
         <input type="file" ref="fileInput" accept="image/*" class="hidden" @change="handleImageUpload" />
 
         <!-- 编辑器 -->
-        <div class="border rounded-lg overflow-hidden">
-          <EditorContent :editor="editor" class="min-h-[400px] px-4 py-3 text-sm" />
+        <div class="editor-wrapper">
+          <EditorContent :editor="editor" class="editor-content" />
         </div>
 
-        <!-- 保存 -->
-        <button @click="handleSubmit"
-          class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm">
+        <!-- 保存按钮 -->
+        <button
+          @click="handleSubmit"
+          class="mt-4 theme-btn-primary text-white px-5 py-2 rounded-lg shadow hover:theme-btn-hover hover:shadow-md transition"
+        >
           保存笔记
         </button>
       </div>
 
       <!-- 右侧预览 -->
-      <div class="w-64 border-l pl-6">
-        <h3 class="text-sm font-medium text-gray-700 mb-2">预览</h3>
-        <div class="prose prose-sm max-w-none text-gray-600 whitespace-pre-wrap text-left"
-          v-html="editor?.getHTML() || defaultPlaceholder"></div>
+      <div class="w-72 border-l pl-6">
+        <h3 class="text-sm font-medium theme-text-secondary mb-2">预览</h3>
+        <div
+          class="prose prose-sm max-w-none theme-text-primary whitespace-pre-wrap text-left p-3 rounded-lg"
+          :class="{'bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700': editor?.getHTML(), 'bg-gray-50/50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700': !editor?.getHTML()}"
+          v-html="editor?.getHTML() || defaultPlaceholder"
+        ></div>
       </div>
     </div>
   </div>
@@ -78,36 +85,28 @@ import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 
-
 import { addTechNote, getTechNoteById, updateTechNote } from '@/api/techNote'
-
-const defaultPlaceholder = '<p class="text-gray-400">输入内容将显示在这里</p>'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 const section = route.params.section
 const title = ref('')
-
 const noteId = route.params.id
 const isEdit = !!noteId
-
 const fileInput = ref(null)
+const defaultPlaceholder = '<p class="text-gray-500 dark:text-gray-400 italic">暂无内容，开始编写吧...</p>'
 
 const editor = useEditor({
   extensions: [
-    StarterKit.configure({
-      codeBlock: false,
-    }),
+    StarterKit.configure({ codeBlock: false }),
     TextStyle,
     Color,
     Image,
-    Link.configure({
-      openOnClick: false,
-    }),
+    Link.configure({ openOnClick: false }),
     TaskList,
-    TaskItem.configure({
-      nested: true,
-    }),
+    TaskItem.configure({ nested: true }),
     CodeBlock,
     Blockquote,
     HorizontalRule,
@@ -136,22 +135,17 @@ function triggerImageUpload() {
 function handleImageUpload(event) {
   const file = event.target.files[0]
   if (!file) return
-
   const reader = new FileReader()
   reader.onload = () => {
-    const base64 = reader.result
-    editor.value?.chain().focus().setImage({ src: base64 }).run()
+    editor.value?.chain().focus().setImage({ src: reader.result }).run()
   }
   reader.readAsDataURL(file)
-
-  // 清空input，方便下次上传相同文件
   event.target.value = ''
 }
 
 function setLink() {
   const previousUrl = editor.value?.getAttributes('link').href
   const url = window.prompt('输入链接 URL', previousUrl)
-
   if (url === null) return
   if (url === '') {
     editor.value?.chain().focus().unsetLink().run()
@@ -162,11 +156,10 @@ function setLink() {
 
 function setColor() {
   const color = window.prompt('输入颜色代码（例如 red 或 #f00）')
-  if (color) {
-    editor.value?.chain().focus().setColor(color).run()
-  }
+  if (color) editor.value?.chain().focus().setColor(color).run()
 }
 
+// 保存笔记
 async function handleSubmit() {
   if (!editor.value) return
 
@@ -182,9 +175,11 @@ async function handleSubmit() {
     sectionName: section,
     title: title.value,
     content: contentHTML,
+    userId: userStore.user?.id // 添加用户ID
   }
 
   try {
+    console.log('传递的笔记参数:', JSON.stringify(params, null, 2))
     let res
     if (isEdit) {
       res = await updateTechNote(params)
@@ -194,6 +189,7 @@ async function handleSubmit() {
 
     if (res?.code === 200) {
       alert(isEdit ? '笔记更新成功' : '笔记添加成功')
+      router.push({ name: 'TechNoteList', params: { section } })
     } else {
       alert(res?.message || '保存失败')
     }
@@ -202,7 +198,6 @@ async function handleSubmit() {
       alert('请求失败，请检查控制台')
     }
   }
-
 }
 
 onBeforeUnmount(() => {
@@ -210,67 +205,58 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style>
-.ProseMirror {
+<style scoped>
+/* 编辑器整体容器 */
+.editor-wrapper {
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background: var(--card-bg);
+  box-shadow: inset 0 1px 3px var(--shadow-color);
+  transition: all 0.2s;
+}
+.editor-wrapper:focus-within {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-color);
+}
+
+/* 编辑器内容 */
+.editor-content {
+  min-height: 400px;
+  padding: 1rem;
   font-size: 14px;
   line-height: 1.6;
-  padding: 1rem;
-  min-height: 400px;
-  white-space: pre-wrap;
-  /* 多空格换行显示 */
-  text-align: left;
-  /* 文字靠左 */
   outline: none;
+  color: var(--text-primary);
 }
 
-.ProseMirror:focus {
-  outline: none;
+/* 工具栏按钮 */
+.toolbar-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+.toolbar-btn:hover {
+  background: var(--bg-hover);
+  transform: scale(1.05);
 }
 
+/* ProseMirror 默认样式 */
 .ProseMirror h2 {
   font-size: 1.25rem;
   font-weight: 600;
   margin: 1rem 0 0.5rem;
+  color: var(--text-primary);
 }
-
-/* 代码块样式 */
 .ProseMirror pre {
-  background-color: #1f2937;
-  color: #f3f4f6;
+  background: var(--code-bg) !important;
+  color: var(--code-text) !important;
   padding: 0.75rem;
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  white-space: pre;
-  /* 保持代码块格式 */
   overflow-x: auto;
-}
-
-/* 预览区 */
-.prose-sm {
-  font-size: 13px;
-  line-height: 1.5;
-  color: #4b5563;
-  white-space: pre-wrap;
-  /* 多空格换行显示 */
-  text-align: left;
-  /* 文字靠左 */
-}
-
-.prose-sm h2 {
-  font-size: 1rem;
-  font-weight: 500;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.prose-sm ul {
-  padding-left: 1.25rem;
-  list-style-type: disc;
-}
-
-.prose-sm ol {
-  padding-left: 1.25rem;
-  list-style-type: decimal;
+  border: 1px solid var(--border-color);
 }
 </style>

@@ -22,4 +22,5 @@ public class ProjectVO {
     private Date createdTime;  // 创建时间
     private Date updatedTime;  // 更新时间
     private List<ProjectFile> files;
+    private Integer userId;
 }
