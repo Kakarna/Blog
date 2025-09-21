@@ -1,0 +1,399 @@
+/* 主题变量 */
+:root {
+  /* 明亮模式（默认） */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f1f3f5;
+  
+  --text-primary: #212529;
+  --text-secondary: #495057;
+  --text-tertiary: #868e96;
+  
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  
+  --accent-color: #646cff;
+  --accent-hover: #535bf2;
+  
+  /* 半透明背景 */
+  --bg-translucent-light: rgba(255, 255, 255, 0.8);
+  --bg-translucent-medium: rgba(255, 255, 255, 0.6);
+  --bg-translucent-subtle: rgba(255, 255, 255, 0.3);
+  
+  /* 卡片和面板 */
+  --card-bg: #ffffff;
+  --panel-bg: #f8f9fa;
+  
+  /* 导航栏 */
+  --navbar-bg-start: rgba(219, 234, 254, 0.8); /* blue-100/80 */
+  --navbar-bg-end: rgba(191, 219, 254, 0.8); /* blue-200/80 */
+  
+  /* 按钮 */
+  --button-bg: #f9f9f9;
+  --button-hover: #e9ecef;
+}
+
+/* 暗色模式 */
+.dark {
+  /* 暗色模式（不太暗，带透明效果） */
+  --bg-primary: #2c3e50;
+  --bg-secondary: #34495e;
+  --bg-tertiary: #3d566e;
+  
+  --text-primary: rgba(255, 255, 255, 0.9);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.5);
+  
+  --border-color: #4b5563;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  
+  --accent-color: #818cf8;
+  --accent-hover: #93c5fd;
+  
+  /* 半透明背景 */
+  --bg-translucent-light: rgba(44, 62, 80, 0.8);
+  --bg-translucent-medium: rgba(44, 62, 80, 0.6);
+  --bg-translucent-subtle: rgba(44, 62, 80, 0.3);
+  
+  /* 卡片和面板 */
+  --card-bg: rgba(52, 73, 94, 0.8);
+  --panel-bg: rgba(61, 86, 110, 0.8);
+  
+  /* 导航栏 */
+  --navbar-bg-start: rgba(30, 58, 138, 0.7); /* 深蓝色半透明 */
+  --navbar-bg-end: rgba(37, 99, 235, 0.7); /* 蓝色半透明 */
+  
+  /* 按钮 */
+  --button-bg: #374151;
+  --button-hover: #4b5563;
+}
+
+/* 应用主题变量到元素 */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: var(--accent-color);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+button {
+  background-color: var(--button-bg);
+}
+
+button:hover {
+  border-color: var(--accent-color);
+  background-color: var(--button-hover);
+}
+
+/* 卡片样式 */
+.card, .panel {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+/* 添加毛玻璃效果的类 */
+.backdrop-blur {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 半透明背景类 */
+.bg-translucent-light {
+  background-color: var(--bg-translucent-light);
+}
+
+.bg-translucent-medium {
+  background-color: var(--bg-translucent-medium);
+}
+
+.bg-translucent-subtle {
+  background-color: var(--bg-translucent-subtle);
+}
+
+/* P3风格动画效果 */
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes moon-phase {
+  0% {
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
+  }
+  25% {
+    clip-path: polygon(50% 50%, 50% 0%, 75% 0%, 100% 25%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
+  }
+  50% {
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
+  }
+  75% {
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 25% 100%, 0% 75%, 0% 0%, 50% 0%);
+  }
+  100% {
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
+  }
+}
+
+.animate-ripple {
+  animation: ripple 3s ease-in-out infinite;
+}
+
+.animate-moon-phase {
+  animation: moon-phase 8s ease-in-out infinite;
+}
+
+.moon-mask {
+  mask: radial-gradient(circle at center, transparent 40%, black 41%);
+  -webkit-mask: radial-gradient(circle at center, transparent 40%, black 41%);
+}
+
+/* P3风格发光效果 */
+.p3-title-glow {
+  text-shadow: 0 0 10px rgba(96, 165, 250, 0.5),
+              0 0 20px rgba(96, 165, 250, 0.3),
+              0 0 30px rgba(96, 165, 250, 0.2);
+}
+
+.p3-subtitle {
+  text-shadow: 0 0 8px rgba(139, 92, 246, 0.4),
+              0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+/* P3风格按钮 */
+.p3-btn {
+  @apply px-4 py-2 rounded-lg font-semibold transition-all duration-300;
+}
+
+.p3-btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30;
+}
+
+.p3-btn-secondary {
+  @apply bg-gray-600 hover:bg-gray-700 text-white shadow-lg shadow-gray-500/30;
+}
+
+/* P3风格平滑动画效果 - 新增 */
+@keyframes moon-phase-smooth {
+  0% {
+    clip-path: ellipse(20% 35% at 50% 50%);
+    opacity: 0.8;
+  }
+  25% {
+    clip-path: ellipse(30% 45% at 50% 50%);
+    opacity: 0.9;
+  }
+  50% {
+    clip-path: ellipse(40% 50% at 50% 50%);
+    opacity: 1;
+  }
+  75% {
+    clip-path: ellipse(35% 48% at 50% 50%);
+    opacity: 0.95;
+  }
+  100% {
+    clip-path: ellipse(45% 55% at 50% 50%);
+    opacity: 0.85;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes ripple-slow {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+}
+
+.animate-moon-phase-smooth {
+  animation: moon-phase-smooth 8s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 6s ease-in-out infinite;
+}
+
+.animate-ripple-slow {
+  animation: ripple-slow 5s ease-in-out infinite;
+}
+
+.moon-mask-smooth {
+  mask: radial-gradient(circle, black 60%, transparent 70%);
+  -webkit-mask: radial-gradient(circle, black 60%, transparent 70%);
+}
+
+/* P3风格背景图案 */
+.bg-p3-pattern {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(96, 165, 250, 0.08) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* P3风格发光文字增强 */
+.p3-title-glow {
+  text-shadow: 0 0 20px rgba(96, 165, 250, 0.6), 0 0 40px rgba(96, 165, 250, 0.3);
+  font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+}
+
+.p3-subtitle {
+  text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* P3风格极致透明动画效果 - 新增 */
+@keyframes moon-phase-ultra-smooth {
+  0% {
+    clip-path: ellipse(15% 30% at 50% 50%);
+    opacity: 0.6;
+  }
+  25% {
+    clip-path: ellipse(25% 40% at 50% 50%);
+    opacity: 0.7;
+  }
+  50% {
+    clip-path: ellipse(35% 45% at 50% 50%);
+    opacity: 0.8;
+  }
+  75% {
+    clip-path: ellipse(30% 42% at 50% 50%);
+    opacity: 0.75;
+  }
+  100% {
+    clip-path: ellipse(40% 50% at 50% 50%);
+    opacity: 0.65;
+  }
+}
+
+@keyframes pulse-ultra-smooth {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes ripple-ultra-smooth {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
+
+.animate-moon-phase-ultra-smooth {
+  animation: moon-phase-ultra-smooth 12s ease-in-out infinite;
+}
+
+.animate-pulse-ultra-smooth {
+  animation: pulse-ultra-smooth 8s ease-in-out infinite;
+}
+
+.animate-ripple-ultra-smooth {
+  animation: ripple-ultra-smooth 6s ease-in-out infinite;
+}
+
+.moon-mask-ultra-smooth {
+  mask: radial-gradient(circle, black 50%, transparent 65%);
+  -webkit-mask: radial-gradient(circle, black 50%, transparent 65%);
+}
+
+/* P3风格极致透明背景元素 */
+.bg-p3-element {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 极致透明按钮样式 */
+.p3-btn-transparent {
+  background: rgba(59, 130, 246, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.p3-btn-transparent:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(96, 165, 250, 0.5);
+  transform: translateY(-1px);
+}
+
+/* 极致透明输入框 */
+.p3-input-transparent {
+  background: rgba(31, 41, 55, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(75, 85, 99, 0.4);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.p3-input-transparent:focus {
+  background: rgba(31, 41, 55, 0.4);
+  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+/* 极致透明卡片 */
+.p3-card-transparent {
+  background: rgba(31, 41, 55, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+/* 极致透明模态框 */
+.p3-modal-transparent {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+}

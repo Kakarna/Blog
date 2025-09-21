@@ -84,6 +84,10 @@
         SELECT <include refid="base_column_list"/> FROM tech_notes WHERE section_id = #{sectionId}
     </select>
 
+    <select id="findByUserId" resultMap="base_result_map">
+        SELECT <include refid="base_column_list"/> FROM tech_notes WHERE user_id = #{userId}
+    </select>
+
     <!-- 插入 -->
     <insert id="insert" parameterType="com.easy.entity.po.TechNote">
         <selectKey keyProperty="bean.id" resultType="Integer" order="AFTER">

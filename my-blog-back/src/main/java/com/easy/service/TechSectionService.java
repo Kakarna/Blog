@@ -17,6 +17,10 @@ public interface TechSectionService {
      * 目前用到的
      */
 
+    // 根据用户ID获取所有分区（含预留笔记列表填充）
+    List<TechSection> findByUserId(Integer userId);
+
+
     Integer add(TechSection section);
 
     Integer updateById(TechSection section, Integer id);

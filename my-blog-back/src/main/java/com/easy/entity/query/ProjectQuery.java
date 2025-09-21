@@ -36,6 +36,8 @@ public class ProjectQuery extends BaseQuery {
 	private String updateTimeStart;
 	private String updateTimeEnd;
 
+	private Integer userId;
+
 	// --- Getter & Setter ---
 
 }

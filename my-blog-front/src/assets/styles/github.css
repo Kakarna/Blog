@@ -1,0 +1,37 @@
+:root {
+  --gh-bg: #ffffff;
+  --gh-text: #24292f;
+  --gh-border: #d0d7de;
+  --gh-header-bg: #f6f8fa;
+  --gh-primary: #0969da;
+  --gh-secondary: #57606a;
+}
+
+[data-theme="dark"] {
+  --gh-bg: #0d1117;
+  --gh-text: #c9d1d9;
+  --gh-border: #30363d;
+  --gh-header-bg: #161b22;
+  --gh-primary: #58a6ff;
+  --gh-secondary: #8b949e;
+}
+
+.gh-container {
+  margin: 0 auto;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.gh-header {
+  background-color: var(--gh-header-bg);
+  border-bottom: 1px solid var(--gh-border);
+}
+
+.gh-sidebar {
+  width: 296px;
+}
+
+.gh-content {
+  border-radius: 6px;
+  border: 1px solid var(--gh-border);
+}

@@ -14,12 +14,14 @@
 		<result column="readme" property="readme"/>
 		<result column="create_time" property="createTime"/>
 		<result column="update_time" property="updateTime"/>
+		<result column="user_id" property="userId"/>
 	</resultMap>
 
 	<!-- 通用查询结果列 -->
 	<sql id="base_column_list">
-		id, name, description, type, readme, create_time, update_time
+		id, name, description, type, readme, create_time, update_time, user_id
 	</sql>
+
 
 	<!-- 基础查询条件 -->
 	<sql id="base_query_condition">
@@ -38,6 +40,10 @@
 		<if test="query.updateTime != null">
 			and update_time = #{query.updateTime}
 		</if>
+		<if test="query.userId != null">
+			and user_id = #{query.userId}
+		</if>
+
 	</sql>
 
 	<!-- 扩展查询条件 -->
@@ -90,7 +96,7 @@
 		SELECT COUNT(*) FROM projects
 	</select>
 
-	<!-- 单条插入 -->
+	<!-- 单条插入 ✅ -->
 	<insert id="insert" parameterType="com.easy.entity.po.Project" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO projects
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -101,6 +107,7 @@
 			<if test="bean.readme != null">readme,</if>
 			<if test="bean.createTime != null">create_time,</if>
 			<if test="bean.updateTime != null">update_time,</if>
+			<if test="bean.userId != null">user_id,</if>
 		</trim>
 		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
 			<if test="bean.id != null">#{bean.id},</if>
@@ -110,11 +117,11 @@
 			<if test="bean.readme != null">#{bean.readme},</if>
 			<if test="bean.createTime != null">#{bean.createTime},</if>
 			<if test="bean.updateTime != null">#{bean.updateTime},</if>
+			<if test="bean.userId != null">#{bean.userId},</if>
 		</trim>
 	</insert>
 
-
-	<!-- 插入或更新 -->
+	<!-- 插入或更新 ✅ -->
 	<insert id="insertOrUpdate" parameterType="com.easy.entity.po.Project">
 		INSERT INTO projects
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -125,6 +132,7 @@
 			<if test="bean.readme != null">readme,</if>
 			<if test="bean.createTime != null">create_time,</if>
 			<if test="bean.updateTime != null">update_time,</if>
+			<if test="bean.userId != null">user_id,</if>
 		</trim>
 		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
 			<if test="bean.id != null">#{bean.id},</if>
@@ -134,6 +142,7 @@
 			<if test="bean.readme != null">#{bean.readme},</if>
 			<if test="bean.createTime != null">#{bean.createTime},</if>
 			<if test="bean.updateTime != null">#{bean.updateTime},</if>
+			<if test="bean.userId != null">#{bean.userId},</if>
 		</trim>
 		ON DUPLICATE KEY UPDATE
 		<trim suffixOverrides=",">
@@ -143,22 +152,25 @@
 			<if test="bean.readme != null">readme = VALUES(readme),</if>
 			<if test="bean.createTime != null">create_time = VALUES(create_time),</if>
 			<if test="bean.updateTime != null">update_time = VALUES(update_time),</if>
+			<if test="bean.userId != null">user_id = VALUES(user_id),</if>
 		</trim>
 	</insert>
 
-	<!-- 批量插入 -->
+	<!-- 批量插入 ✅ -->
 	<insert id="insertBatch" parameterType="java.util.List">
-		INSERT INTO projects (name, description, type, readme, create_time, update_time) VALUES
+		INSERT INTO projects (name, description, type, readme, create_time, update_time, user_id)
+		VALUES
 		<foreach collection="list" item="item" separator=",">
-			(#{item.name}, #{item.description}, #{item.type}, #{item.readme}, #{item.createTime}, #{item.updateTime})
+			(#{item.name}, #{item.description}, #{item.type}, #{item.readme}, #{item.createTime}, #{item.updateTime}, #{item.userId})
 		</foreach>
 	</insert>
 
-	<!-- 批量插入或更新 -->
+	<!-- 批量插入或更新 ✅ -->
 	<insert id="insertOrUpdateBatch" parameterType="java.util.List">
-		INSERT INTO projects (name, description, type, readme, create_time, update_time) VALUES
+		INSERT INTO projects (name, description, type, readme, create_time, update_time, user_id)
+		VALUES
 		<foreach collection="list" item="item" separator=",">
-			(#{item.name}, #{item.description}, #{item.type}, #{item.readme}, #{item.createTime}, #{item.updateTime})
+			(#{item.name}, #{item.description}, #{item.type}, #{item.readme}, #{item.createTime}, #{item.updateTime}, #{item.userId})
 		</foreach>
 		ON DUPLICATE KEY UPDATE
 		name = VALUES(name),
@@ -166,8 +178,11 @@
 		type = VALUES(type),
 		readme = VALUES(readme),
 		create_time = VALUES(create_time),
-		update_time = VALUES(update_time)
+		update_time = VALUES(update_time),
+		user_id = VALUES(user_id)
 	</insert>
+
+
 
 	<!-- 根据Id查询 -->
 	<select id="selectById" resultMap="base_result_map" parameterType="java.lang.Integer">
@@ -176,7 +191,7 @@
 		WHERE id = #{id}
 	</select>
 
-	<!-- 根据Id更新 -->
+	<!-- 根据Id更新 ✅ -->
 	<update id="updateById" parameterType="com.easy.entity.po.Project">
 		UPDATE projects
 		<set>
@@ -186,6 +201,7 @@
 			<if test="bean.readme != null">readme = #{bean.readme},</if>
 			<if test="bean.createTime != null">create_time = #{bean.createTime},</if>
 			<if test="bean.updateTime != null">update_time = #{bean.updateTime},</if>
+			<if test="bean.userId != null">user_id = #{bean.userId},</if>
 		</set>
 		WHERE id = #{id}
 	</update>
@@ -220,5 +236,12 @@
 	<delete id="deleteByName" parameterType="java.lang.String">
 		DELETE FROM projects WHERE name = #{name}
 	</delete>
+
+	<!-- 根据用户ID查询项目 -->
+	<select id="findByUserId" resultMap="base_result_map" parameterType="java.lang.Integer">
+		SELECT <include refid="base_column_list"/>
+		FROM projects
+		WHERE user_id = #{userId}
+	</select>
 
 </mapper>

@@ -58,6 +58,11 @@ public class TechNoteQuery extends BaseQuery {
 
     private String updatedTimeEnd;
 
+    /**
+     * 用户ID
+     */
+    private Integer userId;
+
     // --- getter / setter ---
 
 }

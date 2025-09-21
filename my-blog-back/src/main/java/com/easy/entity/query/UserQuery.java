@@ -60,6 +60,13 @@ public class UserQuery extends BaseQuery {
 
 	private String roleFuzzy;
 
+	/**
+	 * 角色（user/admin）
+	 */
+	private String signature;
+
+	private String signatureFuzzy;
+
     /**
      * 注册时间
      */
@@ -77,5 +84,15 @@ public class UserQuery extends BaseQuery {
 	private String updateTimeStart;
 
 	private String updateTimeEnd;
+
+	/**
+	 * 是否公共接口
+	 */
+	private Integer isPublic; // 1 = 公共账号，0 = 普通用户
+
+
+
+
+
 
 }

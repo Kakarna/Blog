@@ -1,5 +1,10 @@
 package com.easy.controller;
 
+/**
+ * 仪表板数据控制器
+ * 提供仪表板所需的各种统计数据接口
+ * 所有接口均为只读，无需认证
+ */
 import com.easy.entity.po.TechNote;
 import com.easy.entity.query.TechNoteQuery;
 import com.easy.entity.vo.PaginationResultVO;
@@ -28,15 +33,17 @@ public class DashboardController {
     private ProjectService projectService;
 
     @Autowired
-    private VisitService visitService; // 如果访问量存 Redis
+    private VisitService visitService;
 
-    
-
+    /**
+     * 获取仪表板统计数据
+     * 前端API: getDashboardStats
+     */
     @GetMapping("/stats")
     public ResponseVO getStats() {
         Integer articleCount = techNoteService.countAll();
         Integer projectCount = projectService.countAll();
-        Integer recentUpdates = techNoteService.countRecent(7); // 最近7天
+        Integer recentUpdates = techNoteService.countRecent(7);
         Integer visits = visitService.getVisits();
 
         Map<String,Integer> stats = new HashMap<>();
@@ -48,30 +55,40 @@ public class DashboardController {
         return ResponseVO.ok(stats);
     }
 
+    /**
+     * 获取笔记分类统计
+     * 前端API: getNoteCategoryStats
+     */
     @GetMapping("/noteCategoryStats")
     public ResponseVO getNoteCategoryStats() {
         List<Map<String, Object>> stats = techNoteService.countByCategory();
         return ResponseVO.ok(stats);
     }
 
+    /**
+     * 获取笔记趋势数据
+     * 前端API: getNoteTrend
+     */
     @GetMapping("/noteTrend")
     public ResponseVO getNoteTrend() {
-        List<Map<String, Object>> trend = techNoteService.countByDay(7); // 最近 7 天
+        List<Map<String, Object>> trend = techNoteService.countByDay(7);
         return ResponseVO.ok(trend);
     }
 
-
+    /**
+     * 获取最近活动
+     * 前端API: getRecentActivities
+     */
     @GetMapping("/recentActivities")
     public ResponseVO getRecentActivities() {
         TechNoteQuery query = new TechNoteQuery();
-        query.setOrderBy("updated_time desc"); // 按更新时间倒序
-        query.setPageNo(1);                   // 第 1 页
-        query.setPageSize(5);                 // 每页 5 条
+        query.setOrderBy("updated_time desc");
+        query.setPageNo(1);
+        query.setPageSize(5);
 
         PaginationResultVO<TechNote> pageResult = techNoteService.findListByPage(query);
-        List<TechNote> recentNotes = pageResult.getList(); // 取分页后的列表
+        List<TechNote> recentNotes = pageResult.getList();
 
         return ResponseVO.ok(recentNotes);
     }
-
 }

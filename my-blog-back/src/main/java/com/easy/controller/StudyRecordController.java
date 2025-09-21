@@ -28,90 +28,120 @@ public class StudyRecordController extends ABaseController {
     private UserService userService;
 
     /**
-     * 备注: 目前使用到的接口
+     * 加载公共学习记录
+     * 前端API: fetchPublicStudyRecords
      */
-
-    //分页查询
-    @RequestMapping("loadDataList")
-    public ResponseVO loadDataList(@RequestBody StudyRecordVO queryVO) {
-        // 先转换成业务查询对象
+    @PostMapping("loadPublicDataList")
+    public ResponseVO loadPublicDataList(@RequestBody StudyRecordVO queryVO) {
         StudyRecordQuery query = new StudyRecordQuery();
         query.setPageNo(queryVO.getPageNo());
         query.setPageSize(queryVO.getPageSize());
         query.setSortField(queryVO.getSortField());
         query.setSortOrder(queryVO.getSortOrder());
+
+        User publicUser = userService.getPublicUser();
+        if (publicUser != null) {
+            query.setUserId(publicUser.getId());
+        }
+
         return getSuccessResponseVO(studyRecordService.findListByPage(query));
     }
 
-    //添加日记
-    @PostMapping("add")
-    public ResponseVO<?> add(@RequestBody StudyRecordVO addVO, HttpServletRequest request, HttpServletResponse response) {
+    /**
+     * 加载私人学习记录
+     * 前端API: fetchPrivateStudyRecords
+     */
+    @PostMapping("loadPrivateDataList")
+    public ResponseVO loadPrivateDataList(@RequestBody StudyRecordVO queryVO,
+                                          HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
-        if (claims == null || !"admin".equals(claims.get("role"))) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return ResponseVO.error("无权限访问");
+        if (claims == null) {
+            return ResponseVO.error("未登录或身份验证失败");
         }
 
-        System.out.println("收到请求：" + addVO); // 加这一行调试
-        /*try {*/
-        // 1. 校验参数
-        if (addVO.getUsername() == null) {
-            return ResponseVO.error("缺少用户名");
+        Integer userId = (Integer) claims.get("id");
+        StudyRecordQuery query = new StudyRecordQuery();
+        query.setPageNo(queryVO.getPageNo());
+        query.setPageSize(queryVO.getPageSize());
+        query.setSortField(queryVO.getSortField());
+        query.setSortOrder(queryVO.getSortOrder());
+        query.setUserId(userId);
+
+        return getSuccessResponseVO(studyRecordService.findListByPage(query));
+    }
+
+    /**
+     * 添加学习记录
+     * 前端API: addStudyRecord
+     */
+    @PostMapping("add")
+    public ResponseVO<?> add(@RequestBody StudyRecordVO addVO, HttpServletRequest request) {
+        Claims claims = (Claims) request.getAttribute("claims");
+        if (claims == null) {
+            return ResponseVO.error("请登录");
         }
 
-        // 2. 查询 userId
-        User user = userService.getUserByUsername(addVO.getUsername());
-        if (user == null) {
-            return ResponseVO.error("用户不存在");
-        }
-
-        // 3. 构建实体对象
+        Integer userId = (Integer) claims.get("id");
         StudyRecord record = new StudyRecord();
-        record.setUserId(user.getId());
+        record.setUserId(userId);
         record.setTitle(addVO.getTitle());
         record.setContent(addVO.getContent());
         record.setStudyDate(addVO.getStudyDate());
 
-        // 4. 保存
         studyRecordService.add(record);
         return ResponseVO.ok("添加成功");
-      /*  }catch (Exception e) {
-            e.printStackTrace();
-            String msg = e.getMessage() != null ? e.getMessage() : "未知错误";
-            return ResponseVO.error("添加日记失败: " + msg);
-        }*/
-
     }
 
-    //更新日记
+    /**
+     * 更新学习记录
+     * 前端API: updateStudyRecord
+     */
     @PostMapping("update")
-    public ResponseVO update(@RequestBody StudyRecord updateData, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseVO update(@RequestBody StudyRecord updateData, HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
-        if (claims == null || !"admin".equals(claims.get("role"))) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return ResponseVO.error("无权限访问");
+        if (claims == null) {
+            return ResponseVO.error("请登录");
         }
-        Integer id = updateData.getId();
-        if (id == null) {
-            return ResponseVO.error("<UNK>");
+
+        Integer userId = (Integer) claims.get("id");
+        String role = (String) claims.get("role");
+
+        StudyRecord existing = studyRecordService.getStudyRecordById(updateData.getId());
+        if (existing == null) return ResponseVO.error("记录不存在");
+
+        if (!"admin".equals(role) && !existing.getUserId().equals(userId)) {
+            return ResponseVO.error("无权限修改他人记录");
         }
-        studyRecordService.updateStudyRecordById(updateData, id);
+
+        studyRecordService.updateStudyRecordById(updateData, updateData.getId());
         return ResponseVO.ok("修改成功");
     }
 
-    //删除日记
+    /**
+     * 删除学习记录
+     * 前端API: deleteStudyRecord
+     */
     @PostMapping("delete")
-    public ResponseVO deleteById(@RequestBody Map<String, Integer> param, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseVO deleteById(@RequestBody Map<String, Integer> param, HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
-        if (claims == null || !"admin".equals(claims.get("role"))) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-
-            return ResponseVO.error("无权限访问");
+        if (claims == null) {
+            return ResponseVO.error("请登录");
         }
+
+        Integer userId = (Integer) claims.get("id");
+        String role = (String) claims.get("role");
+
         Integer id = param.get("id");
+        StudyRecord existing = studyRecordService.getStudyRecordById(id);
+        if (existing == null) return ResponseVO.error("记录不存在");
+
+        if (!"admin".equals(role) && !existing.getUserId().equals(userId)) {
+            return ResponseVO.error("无权限删除他人记录");
+        }
+
         studyRecordService.deleteStudyRecordById(id);
         return ResponseVO.ok("删除成功");
     }
-
 }
+
 

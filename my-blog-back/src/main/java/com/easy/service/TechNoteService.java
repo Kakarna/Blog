@@ -94,4 +94,33 @@ public interface TechNoteService {
      * 根据标题删除
      */
     Integer deleteByTitle(String title);
+
+    /**
+     * 根据用户ID获取所有笔记
+     * @param userId 用户ID
+     * @return 笔记列表
+     */
+    List<TechNote> getNotesByUserId(Integer userId);
+
+    /**
+     * 获取公共笔记（分页）
+     * @param query 查询条件
+     * @return 分页结果
+     */
+    PaginationResultVO<TechNote> getPublicNotes(TechNoteQuery query);
+
+    /**
+     * 根据用户ID分页获取笔记
+     * @param query 查询条件（包含分页参数和用户ID）
+     * @return 分页结果
+     */
+    PaginationResultVO<TechNote> getNotesByUserId(TechNoteQuery query);
+
+    /**
+     * 根据用户ID获取笔记（分页）
+     * @param query 查询条件
+     * @param userId 用户ID
+     * @return 分页结果
+     */
+    PaginationResultVO<TechNote> getPrivateNotes(TechNoteQuery query, Integer userId);
 }

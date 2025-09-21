@@ -1,0 +1,26 @@
+/* 内容页面基础样式 */
+.content-page {
+  max-width: 100%;
+  padding: 20px;
+}
+
+/* 内容容器 */
+.content-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .content-page {
+    padding: 15px;
+  }
+}
+
+/* 适配超小屏幕 */
+@media (max-width: 480px) {
+  .content-page {
+    padding: 10px;
+  }
+}

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class TechNoteVO {
     private String sectionName;
     private Integer sectionId;
+    private Integer userId;
     private Integer pageNo;
     private Integer pageSize;
     private String title;        // 笔记标题

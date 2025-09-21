@@ -14,9 +14,36 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * JWT 权限过滤器
+ */
 @Component
 public class JwtFilter implements Filter {
-    private static final List<String> ADMIN_URLS = Arrays.asList("/techSection/add", "/techSection/update/*", "/techSection/delete/*", "/techNote/add", "/techNote/update", "/techNote/delete", "/studyRecord/add", "/studyRecord/update", "/studyRecord/delete", "/project/addWithFiles","/projectFile/deleteByProjectFile/*","/project/delete/*");
+
+    /**
+     * 需要鉴权的接口（增删改类接口）
+     * 注意：这里只是“需要鉴权”的 URL，并不区分 admin/user，
+     * 后面会结合 token 中的 role / isPublic 来判断具体权限。
+     */
+    private static final List<String> PROTECTED_URLS = Arrays.asList(
+            "/techSection/privateUser",
+            "/techSection/add",
+            "/techSection/update/*",
+            "/techSection/delete/*",
+            "/techNote/add",
+            "/techNote/update",
+            "/techNote/delete",
+        /*    "/techNote/getPrivateNotes",*/
+            "/studyRecord/loadPrivateDataList",
+            "/studyRecord/add",
+            "/studyRecord/update",
+            "/studyRecord/delete",
+           /* "/project/privateProjects",*/
+            "/project/addWithFiles",
+            "/projectFile/deleteByProjectFile/*",
+            "/project/delete/*"
+    );
+
     private final JwtUtils jwtUtils;
 
     @Autowired
@@ -25,11 +52,15 @@ public class JwtFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         String uri = req.getRequestURI();
-        if (needsAdmin(uri)) {
+
+        // 判断是否需要鉴权
+        if (needsAuth(uri)) {
             String authHeader = req.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
@@ -38,42 +69,66 @@ public class JwtFilter implements Filter {
                     claims = jwtUtils.parseToken(token);
                     req.setAttribute("claims", claims);
                 } catch (ExpiredJwtException e) {
-                    resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    resp.setContentType("application/json;charset=UTF-8");
-                    resp.getWriter().write("{\"status\":\"error\",\"code\":401,\"info\":\"Token 已过期\"}");
+                    sendError(resp, 401, "Token 已过期");
                     return;
                 } catch (JwtException e) {
-                    resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    resp.setContentType("application/json;charset=UTF-8");
-                    resp.getWriter().write("{\"status\":\"error\",\"code\":401,\"info\":\"Token 无效\"}");
+                    sendError(resp, 401, "Token 无效");
                     return;
                 }
+
+                // 从 token 中取出角色 & isPublic & 用户id
                 String role = (String) claims.get("role");
-                if (!"admin".equals(role)) {
-                    resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    resp.setContentType("application/json;charset=UTF-8");
-                    resp.getWriter().write("{\"status\":\"error\",\"code\":403,\"info\":\"无权限访问\"}");
+                Integer userId = (Integer) claims.get("id");
+                Integer isPublic = claims.get("isPublic") != null ? (Integer) claims.get("isPublic") : 0;
+
+                // 如果是 admin → 放行
+                if ("admin".equals(role)) {
+                    chain.doFilter(request, response);
                     return;
                 }
+
+                // 普通用户 & 公共账号逻辑
+                if ("user".equals(role)) {
+                    req.setAttribute("userId", userId);
+                    req.setAttribute("isPublic", isPublic);
+                    chain.doFilter(request, response);
+                    return;
+                }
+
+                // 未知角色 → 拒绝
+                sendError(resp, 403, "无权限访问");
+                return;
             } else {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.setContentType("application/json;charset=UTF-8");
-                resp.getWriter().write("{\"status\":\"error\",\"code\":401,\"info\":\"请登录\"}");
+                sendError(resp, 401, "请登录");
                 return;
             }
         }
+
+        // 不需要鉴权的接口，直接放行
         chain.doFilter(request, response);
     }
 
-    private boolean needsAdmin(String uri) {
-        for (String adminUrl : ADMIN_URLS) {
-            if (adminUrl.endsWith("/*")) {
-                String prefix = adminUrl.substring(0, adminUrl.length() - 1);
+    /**
+     * 判断接口是否需要鉴权
+     */
+    private boolean needsAuth(String uri) {
+        for (String url : PROTECTED_URLS) {
+            if (url.endsWith("/*")) {
+                String prefix = url.substring(0, url.length() - 1);
                 if (uri.startsWith(prefix)) return true;
             } else {
-                if (uri.equals(adminUrl)) return true;
+                if (uri.equals(url)) return true;
             }
         }
         return false;
+    }
+
+    /**
+     * 返回错误信息
+     */
+    private void sendError(HttpServletResponse resp, int code, String msg) throws IOException {
+        resp.setStatus(code);
+        resp.setContentType("application/json;charset=UTF-8");
+        resp.getWriter().write("{\"status\":\"error\",\"code\":" + code + ",\"info\":\"" + msg + "\"}");
     }
 }

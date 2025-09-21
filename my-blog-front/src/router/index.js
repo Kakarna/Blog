@@ -23,6 +23,20 @@ const routes = [
     component: Register
   },
   {
+    path: '/user/:id?',
+    name: 'UserHome',
+    component: () => import('@/views/UserHome.vue'),
+    props: true,
+    meta: {
+      key: route => route.fullPath
+    }
+  },
+  {
+    path: '/settings',
+    name: 'setting',
+    component: () => import('@/views/Setting.vue')
+  },
+  {
     path: '/techNotes/:section',
     name: 'TechNoteList',
     component: () => import('@/views/TechNoteList.vue'),
@@ -46,19 +60,30 @@ const routes = [
     component: () => import('@/views/TechNoteDetail.vue')
   },
   {
-    path: '/LearningTimeline',
-    name: 'LearningTimeline',
-    component: () => import('@/views/LearningTimeline.vue')
+    path: '/StudyRecord',
+    name: 'StudyRecord',
+    component: () => import('@/views/studyRecord.vue')
   },
   {
     path: '/MyProjects',
     name: 'MyProjects',
     component: () => import('@/views/MyProjects.vue')
   },
-   {
+  {
     path: '/MyProjects/:projectId',
+    name: 'ProjectDetail',
     component: () => import('@/views/ProjectDetail.vue'),
     props: true
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/About.vue')
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import('@/views/Search.vue')
   },
 
 ]

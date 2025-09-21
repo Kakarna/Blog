@@ -50,4 +50,10 @@ public class TechSectionQuery extends BaseQuery {
 
     private String updatedAtEnd;
 
+    /**
+     * 绑定userid
+     */
+    private Integer userId;
+
+
 }

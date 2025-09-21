@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.easy.mapper.EmailCodeMappers">
+
+    <!-- 实体映射 -->
+    <resultMap id="base_result_map" type="com.easy.entity.po.EmailCode">
+        <id column="id" property="id"/>
+        <result column="email" property="email"/>
+        <result column="code" property="code"/>
+        <result column="expire_time" property="expireTime"/>
+        <result column="send_count" property="sendCount"/>
+        <result column="send_date" property="sendDate"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询列 -->
+    <sql id="base_column_list">
+        id, email, code, expire_time, send_count, send_date, create_time
+    </sql>
+
+    <!-- 查询邮箱对应验证码 -->
+    <select id="selectByEmail" resultMap="base_result_map" parameterType="string">
+        SELECT <include refid="base_column_list"/>
+        FROM email_code
+        WHERE email = #{email}
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 单条插入 -->
+    <insert id="insert" parameterType="com.easy.entity.po.EmailCode" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO email_code (email, code, expire_time, send_count, send_date, create_time)
+        VALUES (#{email}, #{code}, #{expireTime}, #{sendCount}, #{sendDate}, #{createTime})
+    </insert>
+
+    <!-- 删除指定邮箱的验证码 -->
+    <delete id="deleteByEmail" parameterType="string">
+        DELETE FROM email_code WHERE email = #{email}
+    </delete>
+
+    <!-- 更新验证码信息（可选，根据需要添加） -->
+    <update id="updateByEmail" parameterType="com.easy.entity.po.EmailCode">
+        UPDATE email_code
+        <set>
+            <if test="code != null">code = #{code},</if>
+            <if test="expireTime != null">expire_time = #{expireTime},</if>
+            <if test="sendCount != null">send_count = #{sendCount},</if>
+            <if test="sendDate != null">send_date = #{sendDate},</if>
+            update_time = CURRENT_TIMESTAMP
+        </set>
+        WHERE email = #{email}
+    </update>
+
+    <!-- 统计今天已经发送的邮箱验证码数量 -->
+    <select id="countSendToday" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM email_code
+        WHERE email = #{today}
+          AND DATE(create_time) = CURDATE()
+    </select>
+</mapper>

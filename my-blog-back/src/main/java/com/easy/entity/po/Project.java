@@ -59,6 +59,7 @@ public class Project {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateTime;
 
+	private Integer userId; // 新增字段，标记项目归属
 
 	private List<ProjectFile> files;
 	// --- Getter & Setter ---
