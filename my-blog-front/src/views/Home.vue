@@ -11,7 +11,7 @@
         ref="fadeElements"
       >
         <div class="flex-1 flex flex-col justify-center w-full">
-          <p class="theme-text-secondary capitalize text-sm md:text-base mb-2">{{ key.replace(/([A-Z])/g, ' $1') }}</p>
+          <p class="theme-text-secondary capitalize text-sm md:text-base mb-2">{{ getChineseLabel(key) }}</p>
           <p class="text-xl md:text-2xl font-bold theme-text">{{ animatedValues[key] }}</p>
         </div>
       </div>
@@ -77,6 +77,19 @@ const animatedValues = ref({})
 const pieChart = ref(null)
 const lineChart = ref(null)
 const fadeElements = ref([])
+
+// 获取中文标签
+const getChineseLabel = (key) => {
+  const labels = {
+    'visits': '浏览量',
+    'projectCount': '项目总数', 
+    'RecentUpdates': '最近更新',
+    'recentUpdates': '最近更新',
+    'ArticleCount': '笔记总数',
+    'articleCount': '笔记总数'
+  }
+  return labels[key] || key
+}
 
 // 数字滚动动画
 const animateValue = (key, target) => {

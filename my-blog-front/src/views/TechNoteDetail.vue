@@ -19,13 +19,13 @@
     <!-- 内容 -->
     <div v-else>
       <!-- 标题 -->
-      <h1 class="text-3xl font-bold mb-4 text-center theme-title">
+      <h1 class="text-3xl font-bold mb-4 theme-title">
         {{ note?.title }}
       </h1>
 
       <!-- 时间信息 -->
       <div
-        class="flex flex-wrap justify-center items-center theme-text-secondary text-sm mb-6 gap-6"
+        class="flex flex-wrap items-center theme-text-secondary text-sm mb-6 gap-6"
       >
         <div class="flex items-center">
           <span class="font-medium mr-1">创建：</span>
@@ -40,7 +40,7 @@
       <!-- 正文内容 -->
       <div
         v-html="note?.content"
-        class="ProseMirror prose prose-blue dark:prose-invert max-w-none leading-relaxed p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700"
+        class="ProseMirror prose prose-blue dark:prose-invert max-w-none leading-relaxed p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 text-left"
         style="white-space: pre-wrap;"
       ></div>
     </div>

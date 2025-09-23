@@ -23,7 +23,7 @@
         <!-- 标题输入框 -->
         <input
           v-model="title"
-          class="w-full theme-bg-input border border-gray-200 px-3 py-3 text-lg font-medium rounded-lg 
+          class="w-full theme-input px-3 py-3 text-lg font-medium rounded-lg 
                  focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 transition"
           placeholder="输入笔记标题..."
         />

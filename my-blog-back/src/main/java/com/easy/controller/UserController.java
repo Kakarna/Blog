@@ -74,8 +74,17 @@ public class UserController extends ABaseController {
 	 * 前端API: sendUpdateCode - 用于用户更新信息时发送验证码
 	 */
 	@PostMapping("sendCodeForUpdate")
-	public ResponseVO sendCodeForUpdate(@RequestParam String email) {
-		return userService.sendEmailCode(email, false); // 不校验邮箱唯一
+	public ResponseVO sendCodeForUpdate(@RequestParam String email, @RequestParam(required = false) Integer userId) {
+		return userService.sendEmailCode(email, false, userId); // 不校验邮箱唯一，但可以排除特定用户
+	}
+
+	/**
+	 * 用户注册
+	 * 前端API: register - 用于新用户注册
+	 */
+	@PostMapping("register")
+	public ResponseVO register(@RequestBody UserRegisterVO registerVO) {
+		return userService.register(registerVO);
 	}
 
 	/**
@@ -91,12 +100,33 @@ public class UserController extends ABaseController {
 
 	/**
 	 * 根据ID更新用户
-	 * 调用方: TechNoteController/TechSectionController
+	 * 调用方: TechNoteController/TechSectionController/Setting页面
 	 */
 	@PostMapping("updateUserById")
-	public ResponseVO updateUserById(@RequestBody User bean) {
-		this.userService.updateUserById(bean, bean.getId());
-		return getSuccessResponseVO(null);
+	public ResponseVO updateUserById(@RequestBody Map<String, Object> params) {
+		Integer id = (Integer) params.get("id");
+		String updateType = (String) params.get("updateType");
+		
+		if ("password".equals(updateType)) {
+			// 密码修改逻辑
+			String oldPassword = (String) params.get("oldPassword");
+			String newPassword = (String) params.get("newPassword");
+			return userService.updatePassword(id, oldPassword, newPassword);
+		} else if ("email".equals(updateType)) {
+			// 邮箱修改逻辑
+			String oldEmailCode = (String) params.get("oldEmailCode");
+			String newEmail = (String) params.get("newEmail");
+			String newEmailCode = (String) params.get("newEmailCode");
+			return userService.updateEmail(id, oldEmailCode, newEmail, newEmailCode);
+		} else {
+			// 基本信息更新
+			User bean = new User();
+			bean.setNickname((String) params.get("nickname"));
+			bean.setSignature((String) params.get("signature"));
+			bean.setId(id);
+			this.userService.updateUserById(bean, id);
+			return getSuccessResponseVO(null);
+		}
 	}
 
 

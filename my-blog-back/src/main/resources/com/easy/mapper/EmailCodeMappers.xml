@@ -48,16 +48,29 @@
             <if test="expireTime != null">expire_time = #{expireTime},</if>
             <if test="sendCount != null">send_count = #{sendCount},</if>
             <if test="sendDate != null">send_date = #{sendDate},</if>
-            update_time = CURRENT_TIMESTAMP
+            create_time = CURRENT_TIMESTAMP
         </set>
         WHERE email = #{email}
+    </update>
+
+    <!-- 根据ID更新验证码信息 -->
+    <update id="update" parameterType="com.easy.entity.po.EmailCode">
+        UPDATE email_code
+        <set>
+            <if test="email != null">email = #{email},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="expireTime != null">expire_time = #{expireTime},</if>
+            <if test="sendCount != null">send_count = #{sendCount},</if>
+            <if test="sendDate != null">send_date = #{sendDate},</if>
+            create_time = CURRENT_TIMESTAMP
+        </set>
+        WHERE id = #{id}
     </update>
 
     <!-- 统计今天已经发送的邮箱验证码数量 -->
     <select id="countSendToday" resultType="java.lang.Integer">
         SELECT COUNT(1)
         FROM email_code
-        WHERE email = #{today}
-          AND DATE(create_time) = CURDATE()
+        WHERE send_date = #{today}
     </select>
 </mapper>

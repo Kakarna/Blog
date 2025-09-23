@@ -33,17 +33,16 @@
     
     <div class="relative z-10">
     <!-- 标题、筛选与上传按钮 - 固定位置 -->
-    <div class="sticky top-0 bg-opacity-90 backdrop-blur-md z-20 py-4 mb-6"
-         :class="isDark ? 'bg-gray-900/70' : 'bg-white/80'">
+    <div class="sticky top-0 backdrop-blur-md z-20 py-4 mb-6">
       <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <h1 :class="['text-4xl font-bold p3-title-glow', 
                     isDark ? 'text-white' : 'text-blue-900']">项目列表</h1>
         
         <div class="flex items-center gap-3">
           <a-button v-if="isLoggedIn" @click="showModal = true" 
-                   class="upload-btn p3-btn-primary"
-                   :class="isDark ? 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700' :
-                                   'bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600'">
+                   class="upload-btn transition-all duration-300 shadow-md hover:shadow-lg"
+                   :class="isDark ? 'bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white border-0' :
+                                   'bg-gradient-to-r from-indigo-400 to-blue-400 hover:from-indigo-500 hover:to-blue-500 text-white border-0'">
             <template #icon><PlusOutlined /></template>
             上传项目
           </a-button>

@@ -78,9 +78,12 @@
         <button
           @click="prevPage"
           :disabled="pagination.pageNo === 1"
-          class="p-2 border rounded-md text-gray-600 disabled:opacity-40 hover:bg-gray-50"
+          class="p-2 border rounded-md theme-text-secondary disabled:opacity-40 hover:theme-bg-hover"
+          title="上一页"
         >
-          ◀
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
         </button>
 
         <!-- 页码 -->
@@ -92,8 +95,8 @@
             class="px-3 py-1 rounded-md text-sm font-medium cursor-pointer"
             :class="{
               'bg-blue-500 text-white': page === pagination.pageNo,
-              'text-gray-700 hover:bg-gray-100': page !== pagination.pageNo && page !== '...',
-              'pointer-events-none text-gray-400': page === '...'
+              'theme-text-primary hover:theme-bg-hover': page !== pagination.pageNo && page !== '...',
+              'pointer-events-none theme-text-tertiary': page === '...'
             }"
           >
             {{ page }}
@@ -104,16 +107,19 @@
         <button
           @click="nextPage"
           :disabled="pagination.pageNo >= pagination.totalPage"
-          class="p-2 border rounded-md text-gray-600 disabled:opacity-40 hover:bg-gray-50"
+          class="p-2 border rounded-md theme-text-secondary disabled:opacity-40 hover:theme-bg-hover"
+          title="下一页"
         >
-          ▶
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
         </button>
 
         <!-- 每页条数 -->
         <select
           v-model="pagination.pageSize"
           @change="handlePageSizeChange"
-          class="px-2 py-1 border rounded-md text-sm"
+          class="px-2 py-1 border rounded-md text-sm theme-input"
         >
           <option value="5">5条/页</option>
           <option value="10">10条/页</option>
@@ -146,17 +152,17 @@
             v-model="form.title"
             type="text"
             placeholder="标题"
-            class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full theme-input px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
           <textarea
             v-model="form.content"
             placeholder="内容"
-            class="w-full border rounded px-3 py-2 h-24 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full theme-input px-3 py-2 h-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           ></textarea>
           <input
             v-model="form.studyDate"
             type="date"
-            class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            class="w-full theme-input px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 

@@ -119,13 +119,13 @@ loadNotes()
 <template>
   <div class="p-6 w-full max-w-4xl mx-auto theme-bg-primary">
     <!-- 顶部工具栏 -->
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
       <h1 class="text-2xl font-semibold theme-title">{{ section }}笔记</h1>
-      <div class="flex items-center space-x-3">
+      <div class="flex flex-wrap items-center gap-2">
         <!-- 排序字段 -->
         <select
           v-model="sortBy"
-          class="theme-select text-sm"
+          class="theme-select text-sm py-1"
         >
           <option value="title">按标题排序</option>
           <option value="time">按时间排序</option>
@@ -134,20 +134,21 @@ loadNotes()
         <!-- 排序方向按钮 -->
         <button
           @click="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'"
-          class="theme-button-secondary text-sm flex items-center"
+          class="theme-button-secondary text-sm flex items-center py-1 px-2"
         >
-          <ArrowUpIcon v-if="sortOrder === 'asc'" class="h-4 w-4 mr-1" />
-          <ArrowDownIcon v-else class="h-4 w-4 mr-1" />
-          {{ sortOrder === 'asc' ? '升序' : '降序' }}
+          <ArrowUpIcon v-if="sortOrder === 'asc'" class="h-3 w-3 mr-1" />
+          <ArrowDownIcon v-else class="h-3 w-3 mr-1" />
+          <span class="hidden sm:inline">{{ sortOrder === 'asc' ? '升序' : '降序' }}</span>
         </button>
 
         <!-- 新建笔记按钮 -->
         <RouterLink 
           :to="`/techNotes/${section}/new`"
-          class="inline-flex items-center theme-button text-sm"
+          class="inline-flex items-center theme-button text-sm py-1 px-3"
         >
-          <PlusIcon class="h-4 w-4 mr-1" />
-          新建笔记
+          <PlusIcon class="h-3 w-3 mr-1" />
+          <span class="hidden sm:inline">新建笔记</span>
+          <span class="sm:hidden">新建</span>
         </RouterLink>
       </div>
     </div>
@@ -163,13 +164,13 @@ loadNotes()
           :to="`/techNotes/${section}/${note.id}`"
           class="block p-4"
         >
-          <div class="flex">
-            <div class="w-1/4 pr-4 border-r theme-divider">
+          <div class="flex flex-col md:flex-row">
+            <div class="w-full md:w-1/4 md:pr-4 md:border-r theme-divider mb-2 md:mb-0">
               <h3 class="text-lg font-medium theme-text line-clamp-2">
                 {{ note.title }}
               </h3>
             </div>
-            <div class="w-3/4 pl-4">
+            <div class="w-full md:w-3/4 md:pl-4">
               <p class="text-sm theme-text-secondary line-clamp-3 whitespace-pre-line">
                 {{ note.content.replace(/<[^>]*>/g, '') }}
               </p>
@@ -198,8 +199,8 @@ loadNotes()
     </div>
 
     <!-- 分页 -->
-    <div class="mt-8 flex flex-col sm:flex-row justify-between items-center border-t theme-divider pt-6">
-      <div class="text-sm theme-text-secondary mb-4 sm:mb-0">共 {{ totalCount }} 条笔记</div>
+    <div class="mt-8 flex flex-col sm:flex-row justify-between items-center border-t theme-divider pt-6 gap-4">
+      <div class="text-sm theme-text-secondary">共 {{ totalCount }} 条笔记</div>
       <div class="flex items-center space-x-2">
         <!-- 每页数量选择 -->
         <select
@@ -213,35 +214,33 @@ loadNotes()
           <option value="50">50条/页</option>
         </select>
 
-        <!-- 页码 -->
+        <!-- 当前页码显示 -->
+        <span class="text-sm theme-text-secondary px-2">
+          第 {{ pageNo }} 页
+        </span>
+
+        <!-- 上一页 -->
         <button
           @click="changePage(pageNo - 1)"
           :disabled="pageNo <= 1"
-          class="theme-button-secondary py-1 text-sm disabled:opacity-50"
+          class="theme-button-secondary py-1 px-3 text-sm disabled:opacity-50"
+          title="上一页"
         >
-          上一页
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
         </button>
 
-        <template v-for="num in pageNumbers" :key="num">
-          <button
-            v-if="num !== '...'"
-            @click="changePage(num)"
-            :class="[
-              'px-3 py-1 text-sm rounded-md',
-              num === pageNo ? 'theme-button' : 'theme-button-secondary'
-            ]"
-          >
-            {{ num }}
-          </button>
-          <span v-else class="px-2 text-gray-400">…</span>
-        </template>
-
+        <!-- 下一页 -->
         <button
           @click="changePage(pageNo + 1)"
           :disabled="pageNo >= pageTotal"
-          class="theme-button-secondary py-1 text-sm disabled:opacity-50"
+          class="theme-button-secondary py-1 px-3 text-sm disabled:opacity-50"
+          title="下一页"
         >
-          下一页
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
         </button>
       </div>
     </div>

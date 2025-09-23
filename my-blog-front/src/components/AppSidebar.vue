@@ -22,37 +22,47 @@
 
           <!-- 技术笔记 -->
           <li>
-            <div @click="toggle('技术笔记')" class="menu-item cursor-pointer">
+            <router-link to="/techNotes" class="menu-item" active-class="menu-item-active" @click="toggle('技术笔记')">
               技术笔记
-            </div>
+            </router-link>
 
             <ul v-if="open === '技术笔记'" class="ml-3 mt-2 space-y-1 border-l border-gray-200 pl-2">
               <li v-for="section in techNoteSections" :key="section.id" class="flex items-center gap-2 group relative">
                 <div class="flex items-center gap-2 w-full">
-                  <!-- 编辑按钮 -->
-                  <button v-if="editingId !== section.id" @click="startEdit(section.id, section.name)"
-                    class="icon-btn text-yellow-500 hover:text-yellow-600" title="编辑">
-                    ✎
-                  </button>
-
                   <!-- 分区名或输入框 -->
                   <template v-if="editingId === section.id">
                     <input v-model="editName" @keyup.enter="handleUpdate(section.id)" @blur="handleUpdate(section.id)"
-                      class="w-full px-2 py-1 text-base border rounded focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white text-gray-800"
+                      class="w-full px-2 py-1 text-base border rounded focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white text-gray-800 dark:bg-gray-600 dark:text-gray-100"
                       autofocus />
                   </template>
                   <template v-else>
-                    <router-link :to="`/techNotes/${section.name}`" class="sub-menu-item" title="点击查看笔记"
+                    <router-link :to="`/techNotes/${section.name}`" class="sub-menu-item flex-1" title="点击查看笔记"
                       @click="isMobile && handleClose()">
                       {{ section.name }}
                     </router-link>
                   </template>
 
-                  <!-- 删除按钮 -->
-                  <button @click="confirmDelete(section.id, section.name)"
-                    class="icon-btn text-red-500 hover:text-red-600" title="删除">
-                    ×
-                  </button>
+                  <!-- 操作按钮（编辑/删除） -->
+                  <div v-if="editingId !== section.id" class="flex items-center">
+                    <!-- 操作菜单按钮（所有设备） -->
+                    <button @click="showActionMenu = showActionMenu === section.id ? null : section.id"
+                      class="action-menu-button icon-btn text-gray-500 hover:text-blue-500 ml-2" title="操作">
+                      ⋮
+                    </button>
+
+                    <!-- 操作菜单 -->
+                    <div v-if="showActionMenu === section.id" 
+                      class="action-menu-container absolute right-0 top-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-10">
+                      <button @click="startEdit(section.id, section.name); showActionMenu = null"
+                        class="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-600">
+                        编辑
+                      </button>
+                      <button @click="confirmDelete(section.id, section.name); showActionMenu = null"
+                        class="block w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600">
+                        删除
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </li>
 
@@ -100,7 +110,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSidebarStore } from '@/stores/sidebar'
 
@@ -132,6 +142,7 @@ const showInput = ref(false)
 const newSection = ref('')
 const editingId = ref(null)
 const editName = ref('')
+const showActionMenu = ref(null) // 移动端操作菜单显示状态
 
 const fetchSections = async () => {
   try {
@@ -275,12 +286,31 @@ const handleClose = () => {
   emit('close')
 }
 
-onMounted(() => { fetchSections() })
+// 点击外部关闭操作菜单
+const handleActionMenuClickOutside = (e) => {
+  // 如果点击的是操作按钮本身，不关闭菜单
+  if (e.target.closest('.action-menu-button')) {
+    return
+  }
+  
+  if (showActionMenu.value && !e.target.closest('.action-menu-container')) {
+    showActionMenu.value = null
+  }
+}
+
+onMounted(() => { 
+  fetchSections()
+  document.addEventListener('click', handleActionMenuClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleActionMenuClickOutside)
+})
 </script>
 
 <style scoped>
 .sidebar-container {
-  background: var(--bg-translucent-light);
+  background: var(--bg-primary);
   border-right: 1px solid var(--border-color);
   height: 100vh;
   /* 使用视口高度 */
@@ -294,7 +324,7 @@ onMounted(() => { fetchSections() })
   top: var(--header-height);
   /* 从头部下方开始 */
   left: 0;
-  z-index: 50;
+  z-index: 100;
   /* 确保在内容上方 */
   transition: all 0.3s ease;
   backdrop-filter: blur(8px);
@@ -305,6 +335,17 @@ onMounted(() => { fetchSections() })
 /* 暗色模式下的侧边栏 */
 :global(.dark) .sidebar-container {
   background: var(--bg-translucent-light);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* 移动端关闭按钮暗色模式适配 */
+:global(.dark) .mobile-close-btn {
+  background-color: var(--bg-translucent-medium);
+}
+
+:global(.dark) .close-icon {
+  color: var(--text-primary);
 }
 
 .sidebar-expanded {
@@ -394,13 +435,18 @@ onMounted(() => { fetchSections() })
   color: white !important;
 }
 
+.menu-item-active:hover {
+  background-color: var(--accent-hover);
+  color: white !important;
+}
+
 /* 二级菜单 */
 .sub-menu-item {
   display: block;
   padding: 0.4rem 0.6rem 0.4rem 1.8rem;
   border-radius: 6px;
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   transition: all 0.2s;
   white-space: nowrap;
   /* 不换行 */
@@ -422,18 +468,18 @@ onMounted(() => { fetchSections() })
   transition: opacity 0.3s;
 }
 
-.dark .sub-menu-item::before {
-  content: "🌑";
-  opacity: 0.7;
+.sub-menu-item:hover {
+  background-color: var(--bg-translucent-light);
+  color: var(--accent-color);
 }
 
 .sub-menu-item:hover::before {
   opacity: 1;
 }
 
-.sub-menu-item:hover {
-  background-color: var(--bg-translucent-subtle);
-  color: var(--accent-color);
+.dark .sub-menu-item::before {
+  content: "🌑";
+  opacity: 0.7;
 }
 
 /* 添加按钮 */
@@ -474,19 +520,9 @@ onMounted(() => { fetchSections() })
 
   /* 在移动端始终显示编辑/删除按钮 */
   .icon-btn {
-    opacity: 0.8;
+    opacity: 1;
   }
 
-  /* 移动端侧边栏展开时添加遮罩 */
-  .sidebar-expanded::after {
-    content: "";
-    position: fixed;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-  }
+
 }
 </style>

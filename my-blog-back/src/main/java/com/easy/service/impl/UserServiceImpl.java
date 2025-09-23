@@ -97,8 +97,25 @@ public class UserServiceImpl implements UserService{
 	 */
 	@Override
 	public ResponseVO sendEmailCode(String email, boolean checkUserEmailUnique) {
-		if (checkUserEmailUnique && getUserByEmail(email) != null) {
-			return ResponseVO.error("该邮箱已被绑定");
+		return sendEmailCode(email, checkUserEmailUnique, null);
+	}
+
+	@Override
+	public ResponseVO sendEmailCode(String email, boolean checkUserEmailUnique, Integer excludeUserId) {
+		if (checkUserEmailUnique) {
+			User existingUser = getUserByEmail(email);
+			if (existingUser != null && (excludeUserId == null || !existingUser.getId().equals(excludeUserId))) {
+				return ResponseVO.error("该邮箱已被绑定");
+			}
+		}
+		
+		// 对于新邮箱验证码发送，立即检查邮箱是否已被绑定
+		if (!checkUserEmailUnique && excludeUserId != null) {
+			// 这是修改邮箱场景，发送新邮箱验证码时需要检查邮箱是否已被其他用户绑定
+			User existingUser = getUserByEmail(email);
+			if (existingUser != null && !existingUser.getId().equals(excludeUserId)) {
+				return ResponseVO.error("该邮箱已被其他用户绑定");
+			}
 		}
 
 		LocalDate today = LocalDate.now();
@@ -111,6 +128,12 @@ public class UserServiceImpl implements UserService{
 
 		// 3. 查找该邮箱是否已有验证码记录
 		EmailCode record = emailCodeMapper.selectByEmail(email);
+		
+		// 检查验证码是否已存在且未过期
+		if (record != null && record.getExpireTime() != null && record.getExpireTime().after(new Date())) {
+			return ResponseVO.error("七天内已发送过验证码，请检查您的邮箱或稍后再试");
+		}
+		
 		if (record == null) {
 			record = new EmailCode();
 			record.setEmail(email);
@@ -187,6 +210,72 @@ public class UserServiceImpl implements UserService{
 		userMapper.insert(user);
 
 		return ResponseVO.ok("注册成功");
+	}
+
+	/**
+	 * 密码修改
+	 * 前端API: updateUserById - 用于修改密码
+	 */
+	@Override
+	public ResponseVO updatePassword(Integer id, String oldPassword, String newPassword) {
+		// 1. 获取用户信息
+		User user = userMapper.selectById(id);
+		if (user == null) {
+			return ResponseVO.error("用户不存在");
+		}
+
+		// 2. 验证旧密码
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+			return ResponseVO.error("当前密码错误");
+		}
+
+		// 3. 更新密码
+		user.setPassword(passwordEncoder.encode(newPassword));
+		user.setUpdateTime(new Date());
+		userMapper.updateById(user, id);
+
+		// 返回需要重新登录的提示信息
+		ResponseVO<String> response = ResponseVO.ok("密码修改成功");
+		response.setInfo("密码修改成功，请重新登录");
+		return response;
+	}
+
+	/**
+	 * 邮箱修改
+	 * 前端API: updateUserById - 用于修改邮箱
+	 */
+	@Override
+	public ResponseVO updateEmail(Integer id, String oldEmailCode, String newEmail, String newEmailCode) {
+		// 1. 获取用户信息
+		User user = userMapper.selectById(id);
+		if (user == null) {
+			return ResponseVO.error("用户不存在");
+		}
+
+		// 2. 验证旧邮箱验证码
+		EmailCode oldCode = emailCodeMapper.selectByEmail(user.getEmail());
+		if (oldCode == null || !oldCode.getCode().equals(oldEmailCode)) {
+			return ResponseVO.error("当前邮箱验证码错误");
+		}
+
+		// 3. 验证新邮箱验证码
+		EmailCode newCode = emailCodeMapper.selectByEmail(newEmail);
+		if (newCode == null || !newCode.getCode().equals(newEmailCode)) {
+			return ResponseVO.error("新邮箱验证码错误");
+		}
+
+		// 4. 检查新邮箱是否已被使用
+		User existingUser = getUserByEmail(newEmail);
+		if (existingUser != null && !existingUser.getId().equals(id)) {
+			return ResponseVO.error("新邮箱已被其他用户使用");
+		}
+
+		// 5. 更新邮箱
+		user.setEmail(newEmail);
+		user.setUpdateTime(new Date());
+		userMapper.updateById(user, id);
+
+		return ResponseVO.ok("邮箱修改成功");
 	}
 
 	/**

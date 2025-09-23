@@ -18,26 +18,26 @@
     
     <div class="max-w-5xl mx-auto p-6 relative z-10">
     <!-- 头部区域 -->
-    <div :class="['flex items-start gap-8 p-8 rounded-2xl shadow-lg border backdrop-blur-xl', 
+    <div :class="['flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 p-6 md:p-8 rounded-2xl shadow-lg border backdrop-blur-xl', 
       isDark ? 'bg-gray-800/60 border-blue-400/15 shadow-blue-500/3' : 'bg-white/80 border-gray-100']">
       <!-- 头像 -->
       <div class="relative">
         <img
           :src="user.avatar || defaultAvatar"
           alt="avatar"
-          class="w-36 h-36 rounded-full border-4 border-white shadow-xl object-cover"
+          class="w-24 h-24 md:w-36 md:h-36 rounded-full border-4 border-white shadow-xl object-cover"
         />
-        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
-          <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <div class="absolute -bottom-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+          <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
           </svg>
         </div>
       </div>
 
       <!-- 基本信息 -->
-      <div class="flex-1">
-        <div class="flex items-center gap-4 mb-3">
-          <h1 :class="['text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent', 
+      <div class="flex-1 text-center md:text-left">
+        <div class="flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-4 mb-3">
+          <h1 :class="['text-2xl md:text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent', 
             isDark ? 'from-blue-300 to-purple-400 p3-title-glow' : 'from-gray-800 to-blue-600']">
             {{ user.nickname || user.username }}
           </h1>
@@ -48,37 +48,37 @@
         </div>
 
         <div :class="['space-y-2', isDark ? 'text-gray-300' : 'text-gray-600']">
-          <div v-if="user.email" class="flex items-center gap-2">
+          <div v-if="user.email" class="flex items-center justify-center md:justify-start gap-2">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
               <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
             </svg>
-            <span>{{ user.email }}</span>
+            <span class="text-sm md:text-base">{{ user.email }}</span>
           </div>
 
-          <div class="flex items-center gap-2">
+          <div class="flex items-center justify-center md:justify-start gap-2">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
             </svg>
-            <span>加入于 {{ formatDate(user.createdAt) }}</span>
+            <span class="text-sm md:text-base">加入于 {{ formatDate(user.createdAt) }}</span>
           </div>
         </div>
 
         <div :class="['mt-4 p-4 rounded-lg border', 
           isDark ? 'bg-gray-700/40 border-gray-600/50' : 'bg-gray-50 border-gray-200']">
-          <p :class="['leading-relaxed', isDark ? 'text-gray-300' : 'text-gray-700']">
+          <p :class="['leading-relaxed text-sm md:text-base', isDark ? 'text-gray-300' : 'text-gray-700']">
             {{ user.bio || '这个人很懒，什么都没写~' }}
           </p>
         </div>
 
         <!-- 编辑按钮（仅本人可见） -->
-        <div v-if="isSelf" class="mt-6">
+        <div v-if="isSelf" class="mt-6 text-center md:text-left">
           <router-link
             to="/settings"
-            :class="['inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200',
+            :class="['inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-gradient-to-r text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm md:text-base',
               isDark ? 'from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700' : 'from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600']"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
             </svg>
             编辑个人资料
@@ -90,16 +90,16 @@
     <div :class="['my-8 border-t', isDark ? 'border-blue-400/20' : 'border-gray-200/50']"></div>
 
     <!-- 内容标签 -->
-    <div :class="['backdrop-blur-xl rounded-2xl shadow-lg border p-6', 
+    <div :class="['backdrop-blur-xl rounded-2xl shadow-lg border p-4 md:p-6', 
       isDark ? 'bg-gray-800/60 border-blue-400/15 shadow-blue-500/3' : 'bg-white/80 border-gray-100']">
-      <nav :class="['flex gap-8 border-b pb-4 mb-6', 
+      <nav :class="['flex flex-wrap gap-4 md:gap-8 border-b pb-4 mb-6', 
         isDark ? 'border-blue-400/20' : 'border-gray-200/50']">
         <button
           v-for="tab in tabs"
           :key="tab"
           @click="currentTab = tab"
           :class="[ 
-            'relative px-4 py-2 font-semibold transition-all duration-200',
+            'relative px-3 py-2 md:px-4 md:py-2 font-semibold transition-all duration-200 text-sm md:text-base',
             currentTab === tab 
               ? (isDark ? 'text-blue-300' : 'text-blue-600')
               : (isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700')
@@ -116,18 +116,18 @@
 
       <!-- 动态内容 -->
       <div v-if="currentTab === '文章'">
-        <div v-if="!user.articles?.length" class="text-center py-12">
-          <svg :class="['w-16 h-16 mx-auto mb-4', isDark ? 'text-gray-600' : 'text-gray-300']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div v-if="!user.articles?.length" class="text-center py-8 md:py-12">
+          <svg :class="['w-12 h-12 md:w-16 md:h-16 mx-auto mb-4', isDark ? 'text-gray-600' : 'text-gray-300']" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
           </svg>
-          <p :class="['text-lg', isDark ? 'text-gray-400' : 'text-gray-500']">还没有发布过文章</p>
+          <p :class="['text-base md:text-lg', isDark ? 'text-gray-400' : 'text-gray-500']">还没有发布过文章</p>
         </div>
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div v-else class="grid grid-cols-1 gap-3 md:gap-4">
           <article
             v-for="article in user.articles"
             :key="article.id"
             :class="[
-              'group cursor-pointer overflow-hidden rounded-xl border transition-all duration-500 transform hover:-translate-y-1 hover:shadow-lg hover:rotate-1',
+              'group cursor-pointer overflow-hidden rounded-lg md:rounded-xl border transition-all duration-300 transform hover:-translate-y-0.5 md:hover:-translate-y-1 hover:shadow-md md:hover:shadow-lg',
               isDark 
                 ? 'border-gray-600 bg-gray-800/90 hover:bg-gray-700/80' 
                 : 'border-gray-200 bg-white/95 hover:bg-gray-50'
@@ -135,13 +135,13 @@
             @click="goToArticle(article)"
           >
             <!-- 文章卡片顶部装饰条 -->
-            <div :class="['h-1.5 bg-gradient-to-r', 
+            <div :class="['h-1 md:h-1.5 bg-gradient-to-r', 
               isDark ? 'from-purple-500 to-blue-500' : 'from-blue-400 to-cyan-400']"></div>
             
-            <div class="p-5">
+            <div class="p-4 md:p-5">
               <!-- 文章标题 -->
               <h3 :class="[
-                'text-lg font-bold transition-colors duration-200 mb-2 line-clamp-2',
+                'text-base md:text-lg font-bold transition-colors duration-200 mb-2 line-clamp-2',
                 isDark 
                   ? 'text-gray-200 group-hover:text-blue-300' 
                   : 'text-gray-800 group-hover:text-blue-600'
@@ -151,7 +151,7 @@
               
               <!-- 文章内容预览 -->
               <p v-if="article.content" :class="[
-                'text-sm mb-3 line-clamp-2',
+                'text-xs md:text-sm mb-3 line-clamp-2',
                 isDark ? 'text-gray-400' : 'text-gray-600'
               ]">
                 {{ stripHtml(article.content) }}
@@ -164,7 +164,7 @@
               ]">
                 <div :class="['flex items-center text-xs', 
                   isDark ? 'text-gray-400' : 'text-gray-500']">
-                  <svg class="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="w-3 h-3 md:w-3.5 md:h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                   </svg>
                   {{ formatDate(article.createdAt) }}
@@ -173,7 +173,7 @@
                 <span :class="['inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
                   isDark ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-800']">
                   查看详情
-                  <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-2.5 h-2.5 md:w-3 md:h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                   </svg>
                 </span>
@@ -191,8 +191,11 @@
               :disabled="pagination.pageNo === 1"
               :class="['px-3 py-1 border rounded-md disabled:opacity-40',
                 isDark ? 'text-gray-300 border-gray-700 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50']"
+              title="上一页"
             >
-              上一页
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
             </button>
 
             <!-- 页码 -->
@@ -221,8 +224,11 @@
               :disabled="pagination.pageNo >= pagination.totalPage"
               :class="['px-3 py-1 border rounded-md disabled:opacity-40',
                 isDark ? 'text-gray-300 border-gray-700 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50']"
+              title="下一页"
             >
-              下一页
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
             </button>
 
             <!-- 每页条数 -->

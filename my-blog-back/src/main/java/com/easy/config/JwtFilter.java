@@ -87,8 +87,8 @@ public class JwtFilter implements Filter {
                     return;
                 }
 
-                // 普通用户 & 公共账号逻辑
-                if ("user".equals(role)) {
+                // 普通用户 & 公共账号逻辑（支持大小写）
+                if ("user".equalsIgnoreCase(role)) {
                     req.setAttribute("userId", userId);
                     req.setAttribute("isPublic", isPublic);
                     chain.doFilter(request, response);

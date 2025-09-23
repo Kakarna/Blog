@@ -211,7 +211,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import AvatarUpload from '@/components/AvatarUpload.vue'
-import { getUserById, updateUserById, sendEmailCode } from '@/api/userApi'
+import { getUserById, updateUserById, sendUpdateEmailCode } from '@/api/userApi'
 import { useUserStore } from '@/stores/user'
 
 const user = ref({})
@@ -367,7 +367,18 @@ const savePassword = async () => {
     })
     
     if (res.status === 'success') {
-      showToast('密码修改成功')
+      // 检查是否需要重新登录
+      if (res.info && res.info.includes('请重新登录')) {
+        showToast('密码修改成功，请重新登录', 'success')
+        // 清空用户状态，跳转到登录页
+        userStore.clearUser()
+        // 延迟跳转，让用户看到提示
+        setTimeout(() => {
+          window.location.href = '/login'
+        }, 1500)
+      } else {
+        showToast('密码修改成功')
+      }
       // 清空表单
       form.value.oldPassword = ''
       form.value.newPassword = ''
@@ -402,9 +413,9 @@ const sendCode = async (type) => {
     if (type === 'old') {
       if (countdownOld.value > 0) return
       
-      const res = await sendEmailCode({
+      const res = await sendUpdateEmailCode({
         email: user.value.email,
-        type: 'verify'
+        userId: userId
       })
       
       if (res.status === 'success') {
@@ -431,9 +442,9 @@ const sendCode = async (type) => {
         return showToast('请输入有效的邮箱地址', 'error')
       }
       
-      const res = await sendEmailCode({
+      const res = await sendUpdateEmailCode({
         email: form.value.newEmail,
-        type: 'bind'
+        userId: userId
       })
       
       if (res.status === 'success') {

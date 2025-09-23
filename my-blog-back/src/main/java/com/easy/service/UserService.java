@@ -27,9 +27,16 @@ public interface UserService {
 
     //邮箱验证码接口
     ResponseVO sendEmailCode(String email,boolean checkUserEmailUnique);
+    ResponseVO sendEmailCode(String email,boolean checkUserEmailUnique,Integer excludeUserId);
 
     //注册接口
     ResponseVO register(UserRegisterVO registerVO);
+
+    //密码修改接口
+    ResponseVO updatePassword(Integer id, String oldPassword, String newPassword);
+
+    //邮箱修改接口
+    ResponseVO updateEmail(Integer id, String oldEmailCode, String newEmail, String newEmailCode);
 
 
     /*

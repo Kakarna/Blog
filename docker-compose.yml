@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: blog-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: my-blog
+      MYSQL_USER: blog_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: blog-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+  # Spring Boot后端
+  backend:
+    build:
+      context: ./my-blog-back
+      dockerfile: Dockerfile
+    container_name: blog-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/my-blog?useSSL=false&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: blog_user
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - mysql
+      - redis
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+  # Vue.js前端
+  frontend:
+    build:
+      context: ./my-blog-front
+      dockerfile: Dockerfile
+    container_name: blog-frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      VITE_API_BASE_URL: ${API_BASE_URL:-http://localhost:8080}
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+  # Nginx反向代理 (可选)
+  nginx:
+    image: nginx:alpine
+    container_name: blog-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./ssl:/etc/ssl/certs
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+volumes:
+  mysql_data:
+
+networks:
+  blog-network:
+    driver: bridge

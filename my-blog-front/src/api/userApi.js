@@ -29,12 +29,16 @@ export function sendEmailCode({ email }) {
  * 发送邮箱验证码 - 修改邮箱场景
  * @param {String} email
  */
-export function sendUpdateEmailCode({ email }) {
+export function sendUpdateEmailCode({ email, userId }) {
+  const params = { email };
+  if (userId) {
+    params.userId = userId;
+  }
   return request({
     url: '/user/sendCodeForUpdate',
     method: 'post',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    data: new URLSearchParams({ email }).toString(),
+    data: new URLSearchParams(params).toString(),
   })
 }
 

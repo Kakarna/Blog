@@ -1,5 +1,5 @@
 <template>
-  <header class="w-full fixed top-0 left-0 z-50 theme-navbar backdrop-blur-md">
+  <header class="w-full fixed top-0 left-0 z-[200] theme-navbar backdrop-blur-md">
     <div class="header-inner max-w-[1800px] mx-auto flex items-center justify-between h-16 px-0">
 
       <!-- 左侧区域：侧边栏按钮 + 标题 + 图标 -->
@@ -7,21 +7,18 @@
   <!-- 侧边栏切换按钮（与右侧风格统一） -->
   <button
     @click="$emit('toggleSidebar')"
-    class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/30 hover:bg-white/50 transition shadow-sm"
+    class="relative z-[100] w-10 h-10 flex items-center justify-center rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition shadow-sm"
     title="切换侧边栏"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-      <path
-        fill-rule="evenodd"
-        d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-      />
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="text-gray-900 dark:text-gray-100">
+      <path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
     </svg>
   </button>
 
   <!-- 标题 + 图标 -->
   <router-link
     to="/"
-    class="flex items-center gap-2 text-xl font-semibold text-gray-800 hover:text-blue-600 transition-colors"
+    class="flex items-center gap-2 text-xl font-semibold text-gray-800 hover:text-blue-600 transition-colors hidden sm:flex"
   >
     <!-- 简洁的标题图标 -->
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="text-blue-600">
@@ -39,7 +36,12 @@
       <div class="flex-1 mx-4 max-w-md">
         <div class="relative w-full">
           <input v-model="keyword" @keyup.enter="search" type="text" placeholder="搜索文章/项目..."
-            class="w-full rounded-full px-4 py-1.5 pr-12 text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition placeholder-gray-400 bg-white/50 text-sm" />
+            class="w-full rounded-full px-4 py-1.5 pr-12 border transition text-sm
+                   text-gray-800 dark:text-gray-100 
+                   border-gray-300 dark:border-gray-600
+                   focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400
+                   placeholder-gray-400 dark:placeholder-gray-300
+                   bg-white/50 dark:bg-gray-700/80" />
           <button @click="search"
             class="absolute right-1 top-1/2 -translate-y-1/2 bg-blue-500 text-white px-3 py-0.5 rounded-full hover:bg-blue-600 transition text-sm">
             搜索
@@ -63,16 +65,7 @@
         <div class="relative" ref="menuRef">
           <template v-if="user">
             <div class="flex items-center gap-3">
-              <!-- 通知图标 -->
-              <button class="relative p-1.5 rounded-full hover:bg-blue-100 transition">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                <path
-                  d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
-              </svg>
-              <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-
-            <!-- 用户信息 -->
+              <!-- 用户信息 -->
             <div
               class="flex items-center gap-2 bg-white/30 rounded-full pl-1.5 pr-1 py-1 hover:bg-white/50 transition cursor-pointer"
               @click="toggleDropdown">
